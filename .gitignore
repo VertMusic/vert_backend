@@ -1,0 +1,27 @@
+#Java
+*.class
+*.jar
+*.war
+*.ear
+
+#Scripts
+*.cmd
+*.sh
+
+#Backup files
+*~
+DEADJOE
+*.swp
+*.out
+
+#Mac
+.DS_Store
+
+#Maven 
+log/
+target/
+src/main/resources/git.properties
+
+#Merge files
+*.orig
+*.rej
