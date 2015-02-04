@@ -1,5 +1,7 @@
 package com.project.vert_backend.rest;
 
+import com.project.vert_backend.controller.DataController;
+import java.util.Map;
 import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -34,35 +36,13 @@ public class FileControllerTest {
     public void tearDown() {}
 
     /**
-     * Test of upload method, of class FileController.
+     * Test of playlist method, of class FileController.
      * @TODO: Finish test
      */
     @Test
-    public void testUpload() {
-        FileController instance = new FileController();
-        Response result = instance.upload();
-        Assert.assertNotNull(result);
-    }
-
-    /**
-     * Test of stream method, of class FileController.
-     * @TODO: Finish test
-     */
-    @Test
-    public void testStream() {
-        FileController instance = new FileController();
-        Response result = instance.stream();
-        Assert.assertNotNull(result);
-    }
-
-    /**
-     * Test of download method, of class FileController.
-     * @TODO: Finish test
-     */
-    @Test
-    public void testDownload() {
-        FileController instance = new FileController();
-        Response result = instance.download();
+    public void testPlaylists() {
+        DataController instance = new DataController();
+        Map result = instance.getPlaylists(null);
         Assert.assertNotNull(result);
     }
 }
