@@ -16,7 +16,7 @@ public class BasicAuth {
     public static String[] decode(String rawAuth) {
 
         /// Return null if rawAuth  does not exist.
-        if (rawAuth == null) {
+        if (rawAuth == null || rawAuth.equalsIgnoreCase("")) {
             System.out.println("BasicAuth: No authorization headers found");
             return null;
         }

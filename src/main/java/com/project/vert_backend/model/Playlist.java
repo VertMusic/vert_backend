@@ -9,6 +9,13 @@ public class Playlist extends GuidModel {
     private String author;
     private String date;
 
+    public Playlist() {
+        super();
+        name = "";
+        author = "";
+        date = "";
+    }
+
     public Playlist(String aName, String anAuthor, String aDate) {
         super();
         name = aName;

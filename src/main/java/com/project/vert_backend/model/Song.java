@@ -10,6 +10,9 @@ public class Song extends GuidModel {
     private String playlistId;
     private String filename;
 
+    public Song() {
+    }
+
     public Song(String aTitle, String anArtist, String aPlaylistId, String aFilename) {
         super();
         title = aTitle;

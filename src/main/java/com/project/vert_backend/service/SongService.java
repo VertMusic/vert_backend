@@ -11,7 +11,7 @@ import java.util.Map;
 public class SongService extends GuidModelService<Song> {
 
     @Override
-    public Song create(Song model) {
+    public Song create(Map model) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -21,7 +21,7 @@ public class SongService extends GuidModelService<Song> {
     }
 
     @Override
-    public Song update(Song model) {
+    public Song update(Map model) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

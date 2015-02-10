@@ -9,11 +9,11 @@ import java.util.Map;
  */
 public abstract class GuidModelService<T extends GuidModel> {
 
-    public abstract T create(T model);
+    public abstract T create(Map model);
 
     public abstract T read(String id);
 
-    public abstract T update(T model);
+    public abstract T update(Map model);
 
     public abstract T delete(String id);
 

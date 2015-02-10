@@ -7,11 +7,24 @@ public class User extends GuidModel {
 
     public static final String LOGGED_USER = "logged_user";
     private final String username;
+    private String name;
+    private String email;
     private String passwordHash;
     private String credentialToken; /// Base64 of "Basic username:password" for Basic auth filtering
 
-    public User(String aUsername, String aPasswordHash, String aCredentialToken) {
+    public User() {
         super();
+        name = "";
+        email = "";
+        username = "";
+        passwordHash = "";
+        credentialToken = "";
+    }
+
+    public User(String aName, String anEmail, String aUsername, String aPasswordHash, String aCredentialToken) {
+        super();
+        name = aName;
+        email = anEmail;
         username = aUsername;
         passwordHash = aPasswordHash;
         credentialToken = aCredentialToken;
@@ -35,6 +48,22 @@ public class User extends GuidModel {
 
     public void setCredentialToken(String aCredentialToken) {
         credentialToken = aCredentialToken;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String aName) {
+        name = aName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String anEmail) {
+        email = anEmail;
     }
 
     @Override

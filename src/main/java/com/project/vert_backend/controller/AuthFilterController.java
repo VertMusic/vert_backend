@@ -41,10 +41,18 @@ public class AuthFilterController implements ContainerRequestFilter {
         /// Store the request path (e.g. "/vert/song/upload")
         String path = containerRequest.getPath(true);
 
+        System.out.println("AuthFilterController: Method=" + method + " Path=" + path);
+
         /// Allow access to the WADL (Web Application Description Language) which
         /// describes the structure of the web application's resources.
         if (method.equals("GET") && (path.equals("application.wadl") || path.equals("application.wadl/xsd0.xsd"))) {
             System.out.println("AuthFilterController: Access granted to WADL");
+            return containerRequest;
+        } else if (method.equals("POST") && path.endsWith("data/users")) {
+            System.out.println("AuthFilterController: Access granted to registering User");
+            return containerRequest;
+        } else if (method.equals("POST") && path.endsWith("data/session")) {
+            System.out.println("AuthFilterController: Access granted to login for user");
             return containerRequest;
         }
 

@@ -5,10 +5,8 @@ import com.project.vert_backend.auth.PasswordHasher;
 import com.project.vert_backend.model.User;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -19,25 +17,11 @@ import java.util.logging.Logger;
  */
 public class UserService extends GuidModelService<User> {
 
-    /// TODO: Move to database eventually
-    final Map<String, User> users;
+    ///TODO replace with database driver
+    private final TempRepository repository;
 
     public UserService() {
-        this.users = new HashMap();
-
-        /// Insert placeholder test users "dev" and "admin"
-        try {
-            String[] dev = {"dev", "password"};
-            String[] admin = {"admin", "1234"};
-
-            this.users.put(dev[0],
-                    new User(dev[0], PasswordHasher.createHashedPassword(dev[1]), BasicAuth.encode(dev)));
-            this.users.put(admin[0],
-                    new User(admin[0], PasswordHasher.createHashedPassword(admin[1]), BasicAuth.encode(dev)));
-
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        repository = TempRepository.getInstance();
     }
 
     /**
@@ -53,7 +37,7 @@ public class UserService extends GuidModelService<User> {
         }
 
         /// Retrieve user by username provided
-        User user = this.users.get(username);
+        User user = findByUsername(username);
         if (user == null) {
             return null;
         }
@@ -63,7 +47,7 @@ public class UserService extends GuidModelService<User> {
         try {
             valid = PasswordHasher.validatePasswordAgainstHash(password, user.getPasswordHash());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("UserService: Exception - " + ex);
             return null;
         }
 
@@ -76,40 +60,78 @@ public class UserService extends GuidModelService<User> {
     }
 
     /**
-     * TODO: Implement Create user method. Adds User to database.
+     * Adds a new User to database. Password and username are required fields.
      * @param aGuidModel    The new User to create
-     * @return
+     * @return              The new User
      */
     @Override
-    public User create(User model) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public User create(Map model) {
+        User user;
+        try {
+            ///TODO ensure we check if the username already exists
+            String[] loginInfo = {(String) model.get("username"), (String) model.get("password")};
+            user = new User(
+                    (String) model.get("name"),
+                    (String) model.get("email"),
+                    (String) model.get("username"),
+                    (String) PasswordHasher.createHashedPassword((String) model.get("password")),
+                    (String) BasicAuth.encode(loginInfo));
+
+            return (User) repository.create(user);
+
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            Logger.getLogger("UserService: Exception - " + ex);
+            user = null;
+        }
+        return user;
     }
 
     /**
-     * TODO: Implement Read user method. Retrieves User information from database.
+     * Retrieves User information from database. NOTE: This method takes a User's ID as parameter.
+     * For finding user by username, use UserService::findByUsername().
      * @param id    The id of the User
-     * @return
+     * @return      A User
      */
     @Override
     public User read(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return (User) repository.read(new User(), id);
+    }
+
+    /**
+     * Retrieves a User from the database based on their username.
+     * @param username
+     * @return
+     */
+    User findByUsername(String username) {
+        System.out.println("UserService: Find " + username);
+
+        ///TODO: Once filters are implemented, apply a filter for the required username to this list operation.
+        List<User> users = repository.list(new User(), null);
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                return u;
+            }
+        }
+
+        System.out.println("UserService: ERROR - User not found");
+        return null;
     }
 
     /**
      * TODO: Implement Update user method. Retrieves current user information and makes changes that are present
      *       in the new User object.
      * @param aGuidModel    The new User information.
-     * @return
+     * @return              The updated User
      */
     @Override
-    public User update(User model) {
+    public User update(Map model) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
      * TODO: Implement Delete user method. Removes the User from the database.
      * @param id    The id of the User to remove.
-     * @return
+     * @return      The deleted User
      */
     @Override
     public User delete(String id) {
@@ -118,8 +140,8 @@ public class UserService extends GuidModelService<User> {
 
     /**
      * TODO: Implement List to list the users in the database according to the filter criteria.
-     * @param filter
-     * @return
+     * @param filter    A parameter on which to filter current users
+     * @return          All users that match the filter
      */
     @Override
     public List<User> list(Map<String, Object> filter) {
