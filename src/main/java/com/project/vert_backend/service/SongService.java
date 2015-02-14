@@ -21,7 +21,7 @@ public class SongService extends GuidModelService<Song> {
     }
 
     @Override
-    public Song update(Map model) {
+    public Song update(String id, Map model) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
