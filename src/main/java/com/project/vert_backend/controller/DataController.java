@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -95,6 +96,81 @@ public class DataController {
     }
 
     /**
+     * Creates a new empty playlist.
+     * @param request   Context of request that should have a User that is authenticated
+     * @return          Returns json that contains the creates playlist object.
+     *
+     * This endpoint accepts Json formatted in the following way:
+     *      {
+     *          playlist: {
+     *              name:"Road Trip",
+     *              date:"11-24-2014",
+     *              author:"d2h"
+     *          }
+     *      }
+     *  This endpoint returns Json formatted as follows:
+     *      {
+     *          playlist: {
+     *              id:"123-adb-1243",
+     *              name:"Road Trip",
+     *              date:"11-24-2014",
+     *              author:"d2h"
+     *          }
+     *      }
+     */
+    @POST
+    @Path("/playlists")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Playlist> createPlaylist(Map playlistMap, @Context HttpServletRequest request) {
+        System.out.println("DataController: Received POST playlists request from " + request.getAttribute(User.LOGGED_USER) + "...");
+
+        Playlist playlist = playlistService.create((Map) playlistMap.get("playlist"));
+        Map<String, Playlist> playlistsMap = new HashMap();
+        playlistsMap.put("playlist", playlist);
+
+        System.out.println("DataController: Result - " + playlistsMap);
+        return playlistsMap;
+    }
+
+    /**
+     * Updates an existing playlist with new field values.
+     * @param request   Context of request that should have a User that is authenticated
+     * @return          Returns json that contains the creates playlist object.
+     *
+     * This endpoint accepts Json formatted in the following way:
+     *      {
+     *          playlist: {
+     *              name:"Road Trip",
+     *              date:"11-24-2014",
+     *              author:"d2h"
+     *          }
+     *      }
+     *  This endpoint returns Json formatted as follows:
+     *      {
+     *          playlist: {
+     *              id:"123-adb-1243",
+     *              name:"Road Trip",
+     *              date:"11-24-2014",
+     *              author:"d2h"
+     *          }
+     *      }
+     */
+    @PUT
+    @Path("/playlists/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Playlist> cupdatePlaylist(@PathParam("id") String id, Map playlistMap, @Context HttpServletRequest request) {
+        System.out.println("DataController: Received PUT playlists: " + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
+
+        Playlist playlist = playlistService.update(id, (Map) playlistMap.get("playlist"));
+        Map<String, Playlist> playlistsMap = new HashMap();
+        playlistsMap.put("playlist", playlist);
+
+        System.out.println("DataController: Result - " + playlistsMap);
+        return playlistsMap;
+    }
+
+
+    /**
      * Method endpoint that allows a new user to be created.
      * @param userMap   Map that contains user information
      * @param request   Context of request that should not have a User since one is being created
@@ -126,7 +202,7 @@ public class DataController {
     @Path("/users")
     @Consumes(MediaType.APPLICATION_JSON)
     public Map<String, Map> createUser(Map userMap, @Context HttpServletRequest request) {
-        System.out.println("DataController: Creating: " + userMap);
+        System.out.println("DataController: Creating - " + userMap);
 
         User newUser = userService.create((Map) userMap.get("user"));
 
@@ -143,7 +219,7 @@ public class DataController {
         Map resultMap = new HashMap();
         resultMap.put("user", user);
 
-        System.out.println("Returning: " + resultMap);
+        System.out.println("DataController: Returning - " + resultMap);
 
         return resultMap;
     }

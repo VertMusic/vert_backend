@@ -13,7 +13,7 @@ public abstract class GuidModelService<T extends GuidModel> {
 
     public abstract T read(String id);
 
-    public abstract T update(Map model);
+    public abstract T update(String id, Map model);
 
     public abstract T delete(String id);
 

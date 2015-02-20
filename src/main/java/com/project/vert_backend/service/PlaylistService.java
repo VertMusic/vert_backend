@@ -24,7 +24,7 @@ public class PlaylistService extends GuidModelService<Playlist> {
     @Override
     public Playlist create(Map model) {
         ///TODO ensure we check if the playlist already exists
-        Playlist playlist = new Playlist();
+        Playlist playlist = new Playlist((String) model.get("name"), (String) model.get("author"), (String) model.get("date"));
         return (Playlist) repository.create(playlist);
     }
 
@@ -34,8 +34,8 @@ public class PlaylistService extends GuidModelService<Playlist> {
     }
 
     @Override
-    public Playlist update(Map model) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Playlist update(String id, Map model) {
+        return (Playlist) repository.update(new Playlist(), id, model);
     }
 
     @Override

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author Selwyn Lehmann
@@ -20,18 +19,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class TempRepository<T extends GuidModel> {
 
     /// TODO: Move to database.
-    private volatile ConcurrentLinkedQueue<Playlist> playlists;
+    private volatile ConcurrentHashMap<String, Playlist> playlists;
     private volatile ConcurrentHashMap<String, User> users;
 
     private static TempRepository instance;
 
     private TempRepository() {
         ///Insert placeholder test playlists
-        playlists = new ConcurrentLinkedQueue();
-        playlists.add(new Playlist("Road Trip", "d2h", "11-5-2013"));
-        playlists.add(new Playlist("Rock Anthem", "def_cat", "02-24-1992"));
-        playlists.add(new Playlist("Hip Hop Party", "d2h", "08-05-2014"));
-        playlists.add(new Playlist("CMT Top 30", "fmrsTan92", "01-29-2015"));
+        playlists = new ConcurrentHashMap();
+        Playlist one = new Playlist("Road Trip", "d2h", "11-5-2013");
+        Playlist two = new Playlist("Rock Anthem", "def_cat", "02-24-1992");
+        Playlist three = new Playlist("Hip Hop Party", "d2h", "08-05-2014");
+        Playlist four = new Playlist("CMT Top 30", "fmrsTan92", "01-29-2015");
+        playlists.put(one.getId(), one);
+        playlists.put(two.getId(), two);
+        playlists.put(three.getId(), three);
+        playlists.put(four.getId(), four);
 
         /// Insert placeholder test users "dev" and "admin"
         users = new ConcurrentHashMap();
@@ -83,11 +86,7 @@ public class TempRepository<T extends GuidModel> {
 
         if (type instanceof Playlist) {
             System.out.println("TempRepository: Type - Playlist");
-            for (Playlist p : playlists) {
-                if (p.getId().equalsIgnoreCase(id)) {
-                    return (T) p;
-                }
-            }
+            return (T) playlists.get(id);
         } else if (type instanceof User) {
             System.out.println("TempRepository: Type - User");
             for (User u : users.values()) {
@@ -105,8 +104,7 @@ public class TempRepository<T extends GuidModel> {
 
         if (model instanceof Playlist) {
             System.out.println("TempRepository: Type - Playlist");
-            Playlist p = (Playlist) model;
-            playlists.add(p);
+            playlists.put(model.getId(), (Playlist) model);
         } else if (model instanceof User) {
             System.out.println("TempRepository: Type - User");
             User u = (User) model;
@@ -115,8 +113,49 @@ public class TempRepository<T extends GuidModel> {
         return model;
     }
 
-    public synchronized T update(String guid, T model) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized T update(T type, String guid, Map model) {
+        if (type instanceof Playlist) {
+            Playlist playlist = (Playlist) read(type, guid);
+            System.out.println("TempRepository: Updating Playlist with - " + model);
+            playlist.setAuthor((String) model.get("author"));
+            playlist.setName((String) model.get("name"));
+            playlist.setDate((String) model.get("date"));
+            playlists.replace(guid, playlist);
+            return (T) playlist;
+
+        } else if (type instanceof User) {
+            User user = (User) read(type, guid);
+            System.out.println("TempRepository: Updating User with - " + model);
+            throw new UnsupportedOperationException("Not supported yet.");
+//            for (String updateField : (Set<String>) model.keySet()) {
+//                switch (updateField) {
+//                    case "name":
+//                        user.setName((String) model.get(updateField));
+//                        break;
+//                    case "email":
+//                        user.setEmail((String) model.get(updateField));
+//                        break;
+//                    case "password":
+//                        String[] loginInfo = {user.getUsername(), (String) model.get(updateField)};
+//
+//                        try {
+//                            user.setPasswordHash(PasswordHasher.createHashedPassword((String) model.get(updateField)));
+//                        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+//                            System.out.println("TempRepository: Update User Exception - " + ex);
+//                        }
+//
+//                        user.setCredentialToken(BasicAuth.encode(loginInfo));
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//            users.replace(guid, user);
+//            return (T) user;
+        } else {
+            System.out.println("TempRepository: ERROR on update - Unsupported type " + type);
+            return null;
+        }
     }
 
     public synchronized T delete(T type, String guid) {
@@ -129,7 +168,7 @@ public class TempRepository<T extends GuidModel> {
         if (type instanceof Playlist) {
             System.out.println("TempRepository: Type - Playlist");
             List<Playlist> list = new ArrayList();
-            for (Playlist p : playlists) {
+            for (Playlist p : playlists.values()) {
                 list.add(p);
             }
             return (List<T>) list;

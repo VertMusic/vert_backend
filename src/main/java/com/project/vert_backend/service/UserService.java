@@ -124,7 +124,7 @@ public class UserService extends GuidModelService<User> {
      * @return              The updated User
      */
     @Override
-    public User update(Map model) {
+    public User update(String id, Map model) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
