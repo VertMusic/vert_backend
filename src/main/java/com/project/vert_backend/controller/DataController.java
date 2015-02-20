@@ -57,7 +57,7 @@ public class DataController {
      */
     @GET
     @Path("/playlists/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Playlist getPlaylist(@PathParam("id") String id, @Context HttpServletRequest request) {
         System.out.println("FileController: Received GET playlist:" + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
         Playlist playlist = playlistService.read(id);
@@ -120,6 +120,7 @@ public class DataController {
      */
     @POST
     @Path("/playlists")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Playlist> createPlaylist(Map playlistMap, @Context HttpServletRequest request) {
         System.out.println("DataController: Received POST playlists request from " + request.getAttribute(User.LOGGED_USER) + "...");
@@ -157,6 +158,7 @@ public class DataController {
      */
     @PUT
     @Path("/playlists/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Playlist> cupdatePlaylist(@PathParam("id") String id, Map playlistMap, @Context HttpServletRequest request) {
         System.out.println("DataController: Received PUT playlists: " + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
@@ -201,6 +203,7 @@ public class DataController {
     @POST
     @Path("/users")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map> createUser(Map userMap, @Context HttpServletRequest request) {
         System.out.println("DataController: Creating - " + userMap);
 
@@ -244,7 +247,7 @@ public class DataController {
      */
     @GET
     @Path("/users/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Map<String, User> getUser(@PathParam("id") String id, @Context HttpServletRequest request) {
         System.out.println("DataController: Received POST users request from " + request.getAttribute(User.LOGGED_USER) + "...");
         System.out.println("DataController: Reading user - " + id);
@@ -313,13 +316,7 @@ public class DataController {
         }
 
         /// When we get here it means that we do not have valid login information
-//        session.put("userId", "");
-//        session.put("accessToken", "");
-//
-//        Map resultMap = new HashMap();
-//        resultMap.put("session", session);
         System.out.println("DataController: Throw unauthorized exception (401) - " + sessionMap);
         throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-        //return resultMap;
     }
 }
