@@ -209,6 +209,7 @@ public class DataController {
     @POST
     @Path("/session")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map> loginUser(Map sessionMap, @Context HttpServletRequest request) {
         Map session = new HashMap();
 
