@@ -6,7 +6,7 @@ package com.project.vert_backend.model;
 public class User extends GuidModel {
 
     public static final String LOGGED_USER = "logged_user";
-    private final String username;
+    private String username;
     private String name;
     private String email;
     private String passwordHash;
@@ -32,6 +32,10 @@ public class User extends GuidModel {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String anUsername) {
+        username = anUsername;
     }
 
     public String getPasswordHash() {

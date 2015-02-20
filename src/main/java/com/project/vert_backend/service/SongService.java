@@ -26,7 +26,7 @@ public class SongService extends GuidModelService<Song> {
     }
 
     @Override
-    public Song delete(String id) {
+    public void delete(String id) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

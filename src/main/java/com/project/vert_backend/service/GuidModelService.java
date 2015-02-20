@@ -15,7 +15,7 @@ public abstract class GuidModelService<T extends GuidModel> {
 
     public abstract T update(String id, Map model);
 
-    public abstract T delete(String id);
+    public abstract void delete(String id);
 
     public abstract List<T> list(Map<String, Object> filter);
 }

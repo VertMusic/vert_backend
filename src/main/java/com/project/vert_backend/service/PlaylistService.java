@@ -39,7 +39,7 @@ public class PlaylistService extends GuidModelService<Playlist> {
     }
 
     @Override
-    public Playlist delete(String id) {
+    public void delete(String id) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

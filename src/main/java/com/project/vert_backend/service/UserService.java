@@ -2,6 +2,7 @@ package com.project.vert_backend.service;
 
 import com.project.vert_backend.auth.BasicAuth;
 import com.project.vert_backend.auth.PasswordHasher;
+import com.project.vert_backend.database.UserDAO;
 import com.project.vert_backend.model.User;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -18,10 +19,10 @@ import java.util.logging.Logger;
 public class UserService extends GuidModelService<User> {
 
     ///TODO replace with database driver
-    private final TempRepository repository;
+    private final UserDAO database;
 
     public UserService() {
-        repository = TempRepository.getInstance();
+        database = new UserDAO();
     }
 
     /**
@@ -74,10 +75,10 @@ public class UserService extends GuidModelService<User> {
                     (String) model.get("name"),
                     (String) model.get("email"),
                     (String) model.get("username"),
-                    (String) PasswordHasher.createHashedPassword((String) model.get("password")),
-                    (String) BasicAuth.encode(loginInfo));
+                    PasswordHasher.createHashedPassword((String) model.get("password")),
+                    BasicAuth.encode(loginInfo));
 
-            return (User) repository.create(user);
+            return database.create(user);
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             Logger.getLogger("UserService: Exception - " + ex);
@@ -94,7 +95,8 @@ public class UserService extends GuidModelService<User> {
      */
     @Override
     public User read(String id) {
-        return (User) repository.read(new User(), id);
+        System.out.println("UserService: Read " + id);
+        return database.findById(id);
     }
 
     /**
@@ -104,17 +106,12 @@ public class UserService extends GuidModelService<User> {
      */
     User findByUsername(String username) {
         System.out.println("UserService: Find " + username);
+        User user = database.findByUsername(username);
 
-        ///TODO: Once filters are implemented, apply a filter for the required username to this list operation.
-        List<User> users = repository.list(new User(), null);
-        for (User u : users) {
-            if (u.getUsername().equals(username)) {
-                return u;
-            }
+        if (user == null) {
+            System.out.println("UserService: ERROR - user not found by username '" + username + "'");
         }
-
-        System.out.println("UserService: ERROR - User not found");
-        return null;
+        return user;
     }
 
     /**
@@ -125,7 +122,26 @@ public class UserService extends GuidModelService<User> {
      */
     @Override
     public User update(String id, Map model) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("UserService: Update - " + model);
+
+        ///Create new User object from new field values (without generating an ID since it already exists)
+        User updatedUser = new User();
+        updatedUser.setName((String) model.get("name"));
+        updatedUser.setEmail((String) model.get("email"));
+
+        ///Set the password hash
+        String[] loginInfo = {(String) model.get("username"), (String) model.get("password")};
+        try {
+            updatedUser.setPasswordHash(PasswordHasher.createHashedPassword((String) model.get("password")));
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            System.out.println("UserService: Update User Exception - " + ex);
+            return null;
+        }
+
+        ///Set credential token
+        updatedUser.setCredentialToken(BasicAuth.encode(loginInfo));
+
+        return database.update(id, updatedUser);
     }
 
     /**
@@ -134,8 +150,8 @@ public class UserService extends GuidModelService<User> {
      * @return      The deleted User
      */
     @Override
-    public User delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void delete(String id) {
+        database.delete(id);
     }
 
     /**
@@ -145,6 +161,6 @@ public class UserService extends GuidModelService<User> {
      */
     @Override
     public List<User> list(Map<String, Object> filter) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return database.findAll();
     }
 }

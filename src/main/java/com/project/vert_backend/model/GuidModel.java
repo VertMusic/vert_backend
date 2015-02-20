@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public abstract class GuidModel {
 
-    private final String id;
+    private String id;
 
     public GuidModel() {
         id = UUID.randomUUID().toString();
@@ -15,5 +15,9 @@ public abstract class GuidModel {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String aId) {
+        id = aId;
     }
 }
