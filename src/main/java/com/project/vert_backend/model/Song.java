@@ -7,18 +7,25 @@ public class Song extends GuidModel {
 
     private String title;
     private String artist;
+    private String duration;
     private String playlistId;
-    private String filename;
+    private String filepath;
 
     public Song() {
+        title = "";
+        artist = "";
+        duration = "";
+        playlistId = "";
+        filepath = "";
     }
 
-    public Song(String aTitle, String anArtist, String aPlaylistId, String aFilename) {
+    public Song(String aTitle, String anArtist, String aDuration, String aPlaylistId, String aFilename) {
         super();
         title = aTitle;
         artist = anArtist;
+        duration = aDuration;
         playlistId = aPlaylistId;
-        filename = aFilename;
+        filepath = aFilename;
     }
 
     public String getTitle() {
@@ -37,6 +44,14 @@ public class Song extends GuidModel {
         artist = anArtist;
     }
 
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String aDuration) {
+        duration = aDuration;
+    }
+
     public String getPlaylistId() {
         return playlistId;
     }
@@ -45,12 +60,12 @@ public class Song extends GuidModel {
         playlistId = aPlaylistId;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFilepath() {
+        return filepath;
     }
 
-    public void setFilename(String aFilename) {
-        filename = aFilename;
+    public void setFilepath(String aFilename) {
+        filepath = aFilename;
     }
 
     @Override
@@ -58,7 +73,7 @@ public class Song extends GuidModel {
         StringBuilder result = new StringBuilder("<");
         result.append("title: ").append(title)
                 .append(", artist: ").append(artist)
-                .append(", filename").append(filename)
+                .append(", filepath").append(filepath)
                 .append(", playlistId: ").append(playlistId)
                 .append(", id: ").append(super.getId())
                 .append(">");

@@ -1,5 +1,6 @@
 package com.project.vert_backend.service;
 
+import com.project.vert_backend.database.PlaylistDAO;
 import com.project.vert_backend.model.Playlist;
 import java.util.List;
 import java.util.Map;
@@ -14,38 +15,51 @@ import java.util.Map;
  */
 public class PlaylistService extends GuidModelService<Playlist> {
 
-    ///TODO replace with database driver
-    private final TempRepository repository;
+    private final PlaylistDAO database;
 
     public PlaylistService() {
-        repository = TempRepository.getInstance();
+        database = new PlaylistDAO();
     }
 
     @Override
     public Playlist create(Map model) {
         ///TODO ensure we check if the playlist already exists
-        Playlist playlist = new Playlist((String) model.get("name"), (String) model.get("author"), (String) model.get("date"));
-        return (Playlist) repository.create(playlist);
+        Playlist playlist = new Playlist(
+                (String) model.get("name"),
+                (String) model.get("author"),
+                (String) model.get("date"));
+
+        return database.create(playlist);
     }
 
     @Override
     public Playlist read(String id) {
-        return (Playlist) repository.read(new Playlist(), id);
+        return database.findById(id);
     }
 
     @Override
     public Playlist update(String id, Map model) {
-        return (Playlist) repository.update(new Playlist(), id, model);
+        Playlist updatedPlaylist = new Playlist();
+        updatedPlaylist.setId(id);
+        updatedPlaylist.setName((String) model.get("name"));
+        updatedPlaylist.setAuthor((String) model.get("author"));
+        updatedPlaylist.setDate((String) model.get("date"));
+        ///TODO: uncomment these lines when the like and sharing features are implemented.
+//        updatedPlaylist.setVisibility((String) model.get("visibility"));
+//        updatedPlaylist.setLikes((int) model.get("likes"));
+
+        return database.update(id, updatedPlaylist);
     }
 
     @Override
     public void delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        database.delete(id);
     }
 
     @Override
     public List<Playlist> list(Map<String, Object> filter) {
-        return (List<Playlist>) repository.list(new Playlist(), filter);
+        ///TODO: Implement filter here
+        return database.findAll();
     }
 
 }

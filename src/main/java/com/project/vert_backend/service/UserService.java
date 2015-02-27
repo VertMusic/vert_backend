@@ -18,7 +18,6 @@ import java.util.logging.Logger;
  */
 public class UserService extends GuidModelService<User> {
 
-    ///TODO replace with database driver
     private final UserDAO database;
 
     public UserService() {
@@ -115,7 +114,7 @@ public class UserService extends GuidModelService<User> {
     }
 
     /**
-     * TODO: Implement Update user method. Retrieves current user information and makes changes that are present
+     * Retrieves current user information and makes changes that are present
      *       in the new User object.
      * @param aGuidModel    The new User information.
      * @return              The updated User
@@ -126,6 +125,7 @@ public class UserService extends GuidModelService<User> {
 
         ///Create new User object from new field values (without generating an ID since it already exists)
         User updatedUser = new User();
+        updatedUser.setId(id);
         updatedUser.setName((String) model.get("name"));
         updatedUser.setEmail((String) model.get("email"));
 
@@ -145,7 +145,7 @@ public class UserService extends GuidModelService<User> {
     }
 
     /**
-     * TODO: Implement Delete user method. Removes the User from the database.
+     * Removes the User from the database.
      * @param id    The id of the User to remove.
      * @return      The deleted User
      */
@@ -161,6 +161,7 @@ public class UserService extends GuidModelService<User> {
      */
     @Override
     public List<User> list(Map<String, Object> filter) {
+        ///TODO: Implement filter here
         return database.findAll();
     }
 }

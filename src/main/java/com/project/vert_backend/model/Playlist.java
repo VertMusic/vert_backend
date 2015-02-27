@@ -8,12 +8,16 @@ public class Playlist extends GuidModel {
     private String name;
     private String author;
     private String date;
+    private String visibility;
+    private int likes;
 
     public Playlist() {
         super();
         name = "";
         author = "";
         date = "";
+        visibility = "";
+        likes = 0;
     }
 
     public Playlist(String aName, String anAuthor, String aDate) {
@@ -21,6 +25,9 @@ public class Playlist extends GuidModel {
         name = aName;
         author = anAuthor;
         date = aDate;
+        ///TODO: add these as constructor parameters once needed
+        visibility = "private";
+        likes = 0;
     }
 
     public String getName() {
@@ -47,12 +54,30 @@ public class Playlist extends GuidModel {
         date = aDate;
     }
 
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String aVisibility) {
+        visibility = aVisibility;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int aLikes) {
+        likes = aLikes;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("<");
         result.append("name: ").append(name)
                 .append(", author: ").append(author)
                 .append(", date: ").append(date)
+                .append(", visibility: ").append(visibility)
+                .append(", likes: ").append(likes)
                 .append(", id: ").append(super.getId())
                 .append(">");
 

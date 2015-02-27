@@ -15,9 +15,9 @@ import java.util.List;
 public class UserDAO {
 
     /**
-     * Returns all users from the database. TODO: needs to be modified to not return password hash nor access token
+     * Retrieves all users from the database. TODO: needs to be modified to not return password hash nor access token
      * if not necessary
-     * @return
+     * @return  List of User objects
      */
     public List<User> findAll() {
         String sql = "SELECT * FROM Users";
