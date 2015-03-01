@@ -54,6 +54,9 @@ public class AuthFilterController implements ContainerRequestFilter {
         } else if (method.equals("POST") && path.endsWith("data/session")) {
             System.out.println("AuthFilterController: Access granted to login for user");
             return containerRequest;
+        } else if (method.equals("POST") && path.endsWith("file/song")) {
+            System.out.println("AuthFilterController: Access granted to login for user");
+            return containerRequest;
         }
 
         /// Get the authentication passed in the HTTP headers, if it does not

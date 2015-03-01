@@ -19,13 +19,13 @@ public class Song extends GuidModel {
         filepath = "";
     }
 
-    public Song(String aTitle, String anArtist, String aDuration, String aPlaylistId, String aFilename) {
+    public Song(String aTitle, String anArtist, String aDuration, String aPlaylistId) {
         super();
         title = aTitle;
         artist = anArtist;
         duration = aDuration;
         playlistId = aPlaylistId;
-        filepath = aFilename;
+        filepath = "";
     }
 
     public String getTitle() {
