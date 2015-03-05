@@ -54,8 +54,14 @@ public class AuthFilterController implements ContainerRequestFilter {
         } else if (method.equals("POST") && path.endsWith("data/session")) {
             System.out.println("AuthFilterController: Access granted to login for user");
             return containerRequest;
-        } else if (method.equals("POST") && path.endsWith("file/song")) {
-            System.out.println("AuthFilterController: Access granted to login for user");
+        } else if (method.equals("POST") && path.contains("file/song")) {
+            System.out.println("AuthFilterController: Access granted to file upload");
+            return containerRequest;
+        } else if (method.equals("GET") && path.contains("data/playlists")) {
+            System.out.println("AuthFilterController: Access granted to playlists access");
+            return containerRequest;
+        } else if (method.equals("GET") && path.contains("data/songs")) {
+            System.out.println("AuthFilterController: Access granted to songs access");
             return containerRequest;
         }
 

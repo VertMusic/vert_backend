@@ -31,6 +31,11 @@ public class PasswordHasher {
      */
     public static String createHashedPassword(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        if (password == null || password.equalsIgnoreCase("")) {
+            return null;
+        }
+
         return createHash(password.toCharArray());
     }
 
@@ -42,6 +47,11 @@ public class PasswordHasher {
      */
     public static boolean validatePasswordAgainstHash(String password, String correctHash)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        if (password == null || correctHash == null || password.equalsIgnoreCase("")) {
+            return false;
+        }
+
         return validatePassword(password.toCharArray(), correctHash);
     }
 
@@ -74,6 +84,7 @@ public class PasswordHasher {
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         // Decode the hash into its parameters
         String[] params = correctHash.split(":");
+        System.out.println("Iteration Index" + params[ITERATION_INDEX]);
         int iterations = Integer.parseInt(params[ITERATION_INDEX]);
         byte[] salt = fromHex(params[SALT_INDEX]);
         byte[] hash = fromHex(params[PBKDF2_INDEX]);

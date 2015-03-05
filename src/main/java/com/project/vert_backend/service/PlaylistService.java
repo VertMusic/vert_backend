@@ -21,13 +21,27 @@ public class PlaylistService extends GuidModelService<Playlist> {
         database = new PlaylistDAO();
     }
 
+    public PlaylistService(PlaylistDAO databaseAccessor) {
+        database = databaseAccessor;
+    }
+
     @Override
     public Playlist create(Map model) {
+
+        System.out.println("PlaylistService: create - " + model);
+
+        if (model == null || model.size() < 4) {
+            return null;
+        }
+
         ///TODO ensure we check if the playlist already exists
         Playlist playlist = new Playlist(
                 (String) model.get("name"),
                 (String) model.get("author"),
-                (String) model.get("date"));
+                (String) model.get("date"),
+                (String) model.get("visibility"),
+                (int) model.get("likes")
+        );
 
         return database.create(playlist);
     }
@@ -39,27 +53,36 @@ public class PlaylistService extends GuidModelService<Playlist> {
 
     @Override
     public Playlist update(String id, Map model) {
+
+        System.out.println("Playlist: update (" + id + ") - " + model);
+
+        if (id == null || id.equalsIgnoreCase("") || model == null || model.size() != 5) {
+            return null;
+        }
+
         Playlist updatedPlaylist = new Playlist();
         updatedPlaylist.setId(id);
         updatedPlaylist.setName((String) model.get("name"));
         updatedPlaylist.setAuthor((String) model.get("author"));
         updatedPlaylist.setDate((String) model.get("date"));
-        ///TODO: uncomment these lines when the like and sharing features are implemented.
-//        updatedPlaylist.setVisibility((String) model.get("visibility"));
-//        updatedPlaylist.setLikes((int) model.get("likes"));
+        updatedPlaylist.setVisibility((String) model.get("visibility"));
+        updatedPlaylist.setLikes((int) model.get("likes"));
 
         return database.update(id, updatedPlaylist);
     }
 
     @Override
-    public void delete(String id) {
-        database.delete(id);
+    public boolean delete(String id) {
+        return database.delete(id);
     }
 
     @Override
     public List<Playlist> list(Map<String, Object> filter) {
-        ///TODO: Implement filter here
-        return database.findAll();
+        if (filter == null || filter.isEmpty()) {
+            return database.findAll();
+        }
+        ///TODO: Implement filter: return value based on filer then update unit tests
+        return null;
     }
 
 }

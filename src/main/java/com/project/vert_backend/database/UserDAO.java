@@ -44,6 +44,11 @@ public class UserDAO {
      * @return      An User object
      */
     public User findById(String id) {
+
+        if (id == null || id.equalsIgnoreCase("")) {
+            return null;
+        }
+
         String sql = "SELECT * FROM Users WHERE ID=?";
         User user = null;
         Connection connection = DatabaseConnection.getConnection();
@@ -70,6 +75,11 @@ public class UserDAO {
      * @return      An User object
      */
     public User findByUsername(String username) {
+
+        if (username == null || username.equalsIgnoreCase("")) {
+            return null;
+        }
+
         String sql = "SELECT * FROM Users WHERE Username=?";
         User user = null;
         Connection connection = DatabaseConnection.getConnection();
@@ -96,6 +106,11 @@ public class UserDAO {
      * @return      The persisted User.
      */
     public User create(User user) {
+
+        if (user == null) {
+            return null;
+        }
+
         String sql = "INSERT INTO Users (ID, Name, Username, Email, AuthToken, PasswordHash) VALUES (?, ?, ?, ?, ?, ?)";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -122,6 +137,11 @@ public class UserDAO {
      * @return      The updated User object.
      */
     public User update(String id, User user) {
+
+        if (user == null || id == null || id.equalsIgnoreCase("")) {
+            return null;
+        }
+
         String sql = "UPDATE Users SET Name=?, Username=?, Email=?, AuthToken=?, PasswordHash=? WHERE ID=?";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -146,7 +166,12 @@ public class UserDAO {
      * Removes a User with the given ID from the database.
      * @param id    The ID that identifies the user to be deleted.
      */
-    public void delete(String id) {
+    public boolean delete(String id) {
+
+        if (id == null || id.equalsIgnoreCase("")) {
+            return false;
+        }
+
         String sql = "DELETE FROM Users WHERE ID=?";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -158,6 +183,8 @@ public class UserDAO {
             System.out.println("UserDAO - delete Exception: " + ex);
         }
         DatabaseConnection.closeConnection(connection);
+
+        return true;
     }
 
     /**

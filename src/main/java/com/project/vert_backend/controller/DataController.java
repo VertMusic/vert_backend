@@ -1,8 +1,10 @@
 package com.project.vert_backend.controller;
 
 import com.project.vert_backend.model.Playlist;
+import com.project.vert_backend.model.Song;
 import com.project.vert_backend.model.User;
 import com.project.vert_backend.service.PlaylistService;
+import com.project.vert_backend.service.SongService;
 import com.project.vert_backend.service.UserService;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -42,6 +45,7 @@ public class DataController {
     ///Services to retrieve and create specific model objects
     PlaylistService playlistService = new PlaylistService();
     UserService userService = new UserService();
+    SongService songService = new SongService();
 
     /**
      * Retrieves a single playlist based on an identifier.
@@ -52,18 +56,21 @@ public class DataController {
      * The returned Json is formatted as follows:
      *      {
      *          playlist: {
-     *              name:"Road Trip", date:"11-24-2014", author:"d2h"
+     *              name:"Road Trip", date:"11-24-2014", author:"d2h", visibility:"private", likes:0
      *          }
      */
     @GET
     @Path("/playlists/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Playlist getPlaylist(@PathParam("id") String id, @Context HttpServletRequest request) {
-        System.out.println("FileController: Received GET playlist:" + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
+    public Map<String, Playlist> getPlaylist(@PathParam("id") String id, @Context HttpServletRequest request) {
+        System.out.println("DataController: Received GET playlist:" + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
         Playlist playlist = playlistService.read(id);
+        playlist.setSongs(songService.songIDs(playlist.getId()));
 
-        System.out.println("FileController: Result - " + playlist);
-        return playlist;
+        Map<String, Playlist> playlistMap = new HashMap();
+        playlistMap.put("playlist", playlist);
+        System.out.println("DataController: Result - " + playlistMap);
+        return playlistMap;
     }
 
     /**
@@ -75,9 +82,9 @@ public class DataController {
      *  This endpoint returns Json formatted as follows:
      *      {
      *          playlists: [
-     *              {name:"Road Trip", date:"11-24-2014", author:"d2h"},
-     *              {name:"CMT Top 30", date:"03-10-2010", author:"fmrsTan92"},
-     *              {name:"Rock Anthem", date:"02-24-1999", author:"def_cat"}
+     *              {name:"Road Trip", date:"11-24-2014", author:"d2h", visibility:"private", likes:0},
+     *              {name:"CMT Top 30", date:"03-10-2010", author:"fmrsTan92", visibility:"private", likes:0},
+     *              {name:"Rock Anthem", date:"02-24-1999", author:"def_cat", visibility:"private", likes:0}
      *          ]
      *      }
      */
@@ -85,13 +92,17 @@ public class DataController {
     @Path("/playlists")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, List<Playlist>> getPlaylists(@Context HttpServletRequest request) {
-        System.out.println("FileController: Received GET playlists request from " + request.getAttribute(User.LOGGED_USER) + "...");
+        System.out.println("DataController: Received GET playlists request from " + request.getAttribute(User.LOGGED_USER) + "...");
 
         List<Playlist> playlists = playlistService.list(null);
+        for (Playlist playlist : playlists) {
+            playlist.setSongs(songService.songIDs(playlist.getId()));
+        }
+
         Map<String, List<Playlist>> playlistsMap = new HashMap();
         playlistsMap.put("playlists", playlists);
 
-        System.out.println("FileController: Result - " + playlistsMap);
+        System.out.println("DataController: Result - " + playlistsMap);
         return playlistsMap;
     }
 
@@ -105,7 +116,8 @@ public class DataController {
      *          playlist: {
      *              name:"Road Trip",
      *              date:"11-24-2014",
-     *              author:"d2h"
+     *              author:"d2h",
+     *              visibility: "private"
      *          }
      *      }
      *  This endpoint returns Json formatted as follows:
@@ -114,7 +126,9 @@ public class DataController {
      *              id:"123-adb-1243",
      *              name:"Road Trip",
      *              date:"11-24-2014",
-     *              author:"d2h"
+     *              author:"d2h",
+     *              visibility: "private",
+     *              likes: 0
      *          }
      *      }
      */
@@ -143,7 +157,9 @@ public class DataController {
      *          playlist: {
      *              name:"Road Trip",
      *              date:"11-24-2014",
-     *              author:"d2h"
+     *              author:"d2h",
+     *              visibility: "private",
+     *              likes: 0
      *          }
      *      }
      *  This endpoint returns Json formatted as follows:
@@ -152,7 +168,9 @@ public class DataController {
      *              id:"123-adb-1243",
      *              name:"Road Trip",
      *              date:"11-24-2014",
-     *              author:"d2h"
+     *              author:"d2h",
+     *              visibility: "private",
+     *              likes: 0
      *          }
      *      }
      */
@@ -171,6 +189,66 @@ public class DataController {
         return playlistsMap;
     }
 
+    /**
+     * Retrieves a single song based on an identifier.
+     * @param id        Identifier for the song which is being requested
+     * @param request   Context of request that should have a User that is authenticated
+     * @return          Returns a json object with information regarding a single song.
+     *
+     * The returned Json is formatted as follows:
+     *      {
+     *          song: {
+     *              artist:"Kiss",title:"Unholy",duration:"2:38",playlistId;"123-abc",filepath:"/songs/789-higk.mp3"
+     *          }
+     */
+    @GET
+    @Path("/songs/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Song> getSong(@PathParam("id") String id, @Context HttpServletRequest request) {
+        System.out.println("DataController: Received GET song:" + id + " request from " + request.getAttribute(User.LOGGED_USER) + "...");
+        Song song = songService.read(id);
+
+        Map<String, Song> songMap = new HashMap();
+        songMap.put("song", song);
+        System.out.println("DataController: Result - " + songMap);
+        return songMap;
+    }
+
+    /**
+     * Retrieves a set of all songs that are identified by the query params.
+     * @param ids       List of song ids to be retrieved.
+     * @param request   Context of request that should have a User that is authenticated
+     * @return          Returns json that contains a list of song objects.
+     *
+     *  This endpoint returns Json formatted as follows:
+     *      {
+     *          songs: [
+     *              {artist:"Kiss",title:"Unholy",duration:"2:38",playlistId;"123-abc",filepath:"/songs/789-higk.mp3"},
+     *              {artist:"Drowning Pool",title:"Sinner",duration:"3:47",playlistId;"123-abc",filepath:"/songs/981-hkl.mp3"},
+     *              {artist:"Avenged Sevenfold",title:"Scream",duration:"4:16",playlistId;"123-abc",filepath:"/songs/128-alt.mp3"}
+     *          ]
+     *      }
+     */
+    @GET
+    @Path("/songs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, List<Song>> getSongs(@QueryParam("ids[]") final List<String> ids, @Context HttpServletRequest request) {
+        System.out.println("DataController: Received GET songs request from " + request.getAttribute(User.LOGGED_USER) + "...");
+        System.out.println("DataController: Query parameters - " + ids);
+
+        List<Song> songs;
+        if (ids == null || ids.isEmpty()) {
+            songs = songService.list(null);
+        } else {
+            songs = songService.readMultiple(ids);
+        }
+
+        Map<String, List<Song>> songsMap = new HashMap();
+        songsMap.put("songs", songs);
+
+        System.out.println("DataController: Result - " + songsMap);
+        return songsMap;
+    }
 
     /**
      * Method endpoint that allows a new user to be created.

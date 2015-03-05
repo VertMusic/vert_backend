@@ -1,5 +1,7 @@
 package com.project.vert_backend.model;
 
+import java.util.List;
+
 /**
  * @author Selwyn Lehmann
  */
@@ -9,6 +11,7 @@ public class Playlist extends GuidModel {
     private String author;
     private String date;
     private String visibility;
+    private List<String> songs;
     private int likes;
 
     public Playlist() {
@@ -20,14 +23,13 @@ public class Playlist extends GuidModel {
         likes = 0;
     }
 
-    public Playlist(String aName, String anAuthor, String aDate) {
+    public Playlist(String aName, String anAuthor, String aDate, String aVisibility, int aLikes) {
         super();
         name = aName;
         author = anAuthor;
         date = aDate;
-        ///TODO: add these as constructor parameters once needed
-        visibility = "private";
-        likes = 0;
+        visibility = aVisibility;
+        likes = aLikes;
     }
 
     public String getName() {
@@ -68,6 +70,14 @@ public class Playlist extends GuidModel {
 
     public void setLikes(int aLikes) {
         likes = aLikes;
+    }
+
+    public List<String> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<String> aSongs) {
+        songs = aSongs;
     }
 
     @Override

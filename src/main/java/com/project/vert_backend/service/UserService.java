@@ -24,6 +24,10 @@ public class UserService extends GuidModelService<User> {
         database = new UserDAO();
     }
 
+    public UserService(UserDAO databaseAccessor) {
+        database = databaseAccessor;
+    }
+
     /**
      * Returns a User based on provided username and password combination.
      * @param username  login credential to identify a User
@@ -66,6 +70,14 @@ public class UserService extends GuidModelService<User> {
      */
     @Override
     public User create(Map model) {
+
+        System.out.println("UserService: create - " + model);
+
+        /// If no data is passed in or the Map is empty, return null
+        if (model == null || model.size() != 4) {
+            return null;
+        }
+
         User user;
         try {
             ///TODO ensure we check if the username already exists
@@ -114,8 +126,7 @@ public class UserService extends GuidModelService<User> {
     }
 
     /**
-     * Retrieves current user information and makes changes that are present
-     *       in the new User object.
+     * Retrieves current user information and makes changes that are present in the new User object.
      * @param aGuidModel    The new User information.
      * @return              The updated User
      */
@@ -123,11 +134,16 @@ public class UserService extends GuidModelService<User> {
     public User update(String id, Map model) {
         System.out.println("UserService: Update - " + model);
 
+        if (id == null || id.equalsIgnoreCase("") || model == null || model.size() != 4) {
+            return null;
+        }
+
         ///Create new User object from new field values (without generating an ID since it already exists)
         User updatedUser = new User();
         updatedUser.setId(id);
         updatedUser.setName((String) model.get("name"));
         updatedUser.setEmail((String) model.get("email"));
+        updatedUser.setUsername((String) model.get("username"));
 
         ///Set the password hash
         String[] loginInfo = {(String) model.get("username"), (String) model.get("password")};
@@ -150,18 +166,22 @@ public class UserService extends GuidModelService<User> {
      * @return      The deleted User
      */
     @Override
-    public void delete(String id) {
-        database.delete(id);
+    public boolean delete(String id) {
+         return database.delete(id);
     }
 
     /**
-     * TODO: Implement List to list the users in the database according to the filter criteria.
+     * List the users in the database according to the filter criteria.
      * @param filter    A parameter on which to filter current users
      * @return          All users that match the filter
      */
     @Override
     public List<User> list(Map<String, Object> filter) {
-        ///TODO: Implement filter here
-        return database.findAll();
+
+        if (filter == null || filter.isEmpty()) {
+            return database.findAll();
+        }
+        ///TODO: Implement filter: return value based on filer then update unit tests
+        return null;
     }
 }

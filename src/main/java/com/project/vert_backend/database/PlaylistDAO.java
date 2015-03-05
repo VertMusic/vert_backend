@@ -44,6 +44,11 @@ public class PlaylistDAO {
      * @return      The persisted Playlist.
      */
     public Playlist create(Playlist playlist) {
+
+        if (playlist == null) {
+            return null;
+        }
+
         String sql = "INSERT INTO Playlists (ID, Name, UserID, Date, Likes, Visibility) VALUES (?, ?, ?, ?, ?, ?)";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -70,6 +75,11 @@ public class PlaylistDAO {
      * @return      The updated Playlist object.
      */
     public Playlist update(String id, Playlist playlist) {
+
+        if (playlist == null || id == null || id.equalsIgnoreCase("")) {
+            return null;
+        }
+
         String sql = "UPDATE Playlists SET Name=?, UserID=?, Date=?, Likes=?, Visibility=? WHERE ID=?";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -94,7 +104,12 @@ public class PlaylistDAO {
      * Removes a Playlist with the given ID from the database.
      * @param id    The ID that identifies the playlist to be deleted.
      */
-    public void delete(String id) {
+    public boolean delete(String id) {
+
+        if (id == null || id.equalsIgnoreCase("")) {
+            return false;
+        }
+
         String sql = "DELETE FROM Playlists WHERE ID=?";
         Connection connection = DatabaseConnection.getConnection();
 
@@ -106,6 +121,8 @@ public class PlaylistDAO {
             System.out.println("PlaylistDAO - delete Exception: " + ex);
         }
         DatabaseConnection.closeConnection(connection);
+
+        return true;
     }
 
     /**
@@ -114,6 +131,11 @@ public class PlaylistDAO {
      * @return      An Playlist object
      */
     public Playlist findById(String id) {
+
+        if (id == null || id.equalsIgnoreCase("")) {
+            return null;
+        }
+
         String sql = "SELECT * FROM Playlists WHERE ID=?";
         Playlist playlist = null;
         Connection connection = DatabaseConnection.getConnection();
