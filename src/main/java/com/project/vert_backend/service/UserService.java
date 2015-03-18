@@ -74,7 +74,7 @@ public class UserService extends GuidModelService<User> {
         System.out.println("UserService: create - " + model);
 
         /// If no data is passed in or the Map is empty, return null
-        if (model == null || model.size() != 4) {
+        if (model == null || model.size() >= 4) {
             return null;
         }
 

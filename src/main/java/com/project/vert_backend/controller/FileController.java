@@ -4,7 +4,6 @@ import com.project.vert_backend.model.Song;
 import com.project.vert_backend.model.User;
 import com.project.vert_backend.service.FileService;
 import com.project.vert_backend.service.SongService;
-import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 import java.io.InputStream;
@@ -42,19 +41,19 @@ public class FileController {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Map<String, Object> uploadSong(
             @FormDataParam("file") InputStream fileInputStream,
-            @FormDataParam("file") FormDataContentDisposition contentDispositionHeader,
+            @FormDataParam("filename") FormDataBodyPart fileName,
             @FormDataParam("title") FormDataBodyPart title,
             @FormDataParam("artist") FormDataBodyPart artist,
-            @FormDataParam("playlist") FormDataBodyPart playlist,
+            @FormDataParam("playlistId") FormDataBodyPart playlist,
             @Context HttpServletRequest servletRequest
     ) {
 
         System.out.println("FileController: Received song upload from " + servletRequest.getAttribute(User.LOGGED_USER));
         Map songModel = new HashMap();
-        songModel.put("filename", contentDispositionHeader.getFileName());
         songModel.put("title", title.getValue());
         songModel.put("artist", artist.getValue());
         songModel.put("playlistId", playlist.getValue());
+        songModel.put("filename", fileName.getValue());
 
         ///TODO: Calculate duration
         songModel.put("duration", "");
