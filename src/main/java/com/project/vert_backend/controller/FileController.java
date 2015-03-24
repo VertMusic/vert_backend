@@ -6,10 +6,14 @@ import com.project.vert_backend.service.FileService;
 import com.project.vert_backend.service.SongService;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,6 +35,8 @@ public class FileController {
 
     private static final String SONG_BASE_PATH = "songs/";
     private static final String USER_IMAGE_BASE_PATH = "images/users/";
+
+    private static final int BUFFER_SIZE = 4096; //4KB
 
     FileService fileService = new FileService();
     SongService songService = new SongService();
@@ -72,9 +78,38 @@ public class FileController {
 
     @GET
     @Path("/song/{id}")
-    public Response downloadSong(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        System.out.println("FileController: Received GET song request from " + servletRequest.getAttribute(User.LOGGED_USER) + "...");
-        return Response.ok().build();
+    public void downloadSong(@PathParam("id") String id, @Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse) {
+
+        System.out.println("FileController: Received GET song file request from " + servletRequest.getAttribute(User.LOGGED_USER) + "...");
+
+        Song song = songService.read(id);
+        System.out.println("FileController: Song filename - " + song.getFilepath());
+        servletResponse.setHeader("Content-Type", "audio/mpeg");
+
+        FileInputStream in = null;
+        OutputStream out = null;
+
+        try {
+            out = servletResponse.getOutputStream();
+            in = new FileInputStream(SONG_BASE_PATH + song.getFilepath());
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int read = -1;
+
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+
+        } catch (IOException ex) {
+            System.out.println("FileController: File download exception - " + ex);
+        } finally {
+            try {
+                out.close();
+                out.flush();
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("FileController: File close exception - " + ex);
+            }
+        }
     }
 
     @GET

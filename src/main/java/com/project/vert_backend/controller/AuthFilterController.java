@@ -54,16 +54,21 @@ public class AuthFilterController implements ContainerRequestFilter {
         } else if (method.equals("POST") && path.endsWith("data/session")) {
             System.out.println("AuthFilterController: Access granted to login for user");
             return containerRequest;
-        } else if (method.equals("POST") && path.contains("file/song")) {
-            System.out.println("AuthFilterController: Access granted to file upload");
-            return containerRequest;
-        } else if (method.equals("GET") && path.contains("data/playlists")) {
-            System.out.println("AuthFilterController: Access granted to playlists access");
-            return containerRequest;
-        } else if (method.equals("GET") && path.contains("data/songs")) {
-            System.out.println("AuthFilterController: Access granted to songs access");
+        } else if (method.equals("GET") && path.contains("file/song")) {
+            System.out.println("AuthFilterController: Access granted to file download");
             return containerRequest;
         }
+
+//        else if (method.equals("POST") && path.contains("file/song")) {
+//            System.out.println("AuthFilterController: Access granted to file upload");
+//            return containerRequest;
+//        } else if (method.equals("GET") && path.contains("data/playlists")) {
+//            System.out.println("AuthFilterController: Access granted to playlists access");
+//            return containerRequest;
+//        } else if (method.equals("GET") && path.contains("data/songs")) {
+//            System.out.println("AuthFilterController: Access granted to songs access");
+//            return containerRequest;
+//        }
 
         /// Get the authentication passed in the HTTP headers, if it does not
         /// exist then throw an unauthorized exception
