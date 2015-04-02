@@ -94,7 +94,11 @@ public class DataController {
     public Map<String, List<Playlist>> getPlaylists(@Context HttpServletRequest request) {
         System.out.println("DataController: Received GET playlists request from " + request.getAttribute(User.LOGGED_USER) + "...");
 
-        List<Playlist> playlists = playlistService.list(null);
+        Map filter = new HashMap();
+        User user = (User) request.getAttribute(User.LOGGED_USER);
+        filter.put("author", user.getUsername());
+
+        List<Playlist> playlists = playlistService.list(filter);
         for (Playlist playlist : playlists) {
             playlist.setSongs(songService.songIDs(playlist.getId()));
         }

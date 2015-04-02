@@ -125,6 +125,27 @@ public class PlaylistDAO {
         return true;
     }
 
+    public List<Playlist> findAuthorizedPlaylistsForUser(String authorUsername) {
+        String sql = "SELECT * FROM Playlists WHERE UserID=? OR Visibility='public'";
+        List<Playlist> list = new ArrayList();
+        Connection connection = DatabaseConnection.getConnection();
+
+        try {
+            PreparedStatement pStatement = connection.prepareStatement(sql);
+            pStatement.setString(1, authorUsername);
+            ResultSet resultSet = pStatement.executeQuery();
+
+            while (resultSet.next()) {
+                list.add(processRow(resultSet));
+            }
+        } catch (SQLException ex) {
+            System.out.println("PlaylistDAO - findAuthorizedPlaylistsForUser Exception: " + ex);
+        }
+
+        DatabaseConnection.closeConnection(connection);
+        return list;
+    }
+
     /**
      * Returns one playlist from the database. TODO: Also needs to be modified eventually for security reasons.
      * @param id    The id of the Playlist to find

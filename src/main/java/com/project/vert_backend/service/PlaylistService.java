@@ -80,9 +80,18 @@ public class PlaylistService extends GuidModelService<Playlist> {
     public List<Playlist> list(Map<String, Object> filter) {
         if (filter == null || filter.isEmpty()) {
             return database.findAll();
+        } else {
+            // Grab the first key
+            String attribute = filter.keySet().iterator().next();
+
+            switch (attribute) {
+                case "author":
+                    return database.findAuthorizedPlaylistsForUser((String) filter.get("author"));
+                default:
+                    System.out.println("Playlist: ERROR!!!! No attribute found to filter on");
+                    return null;
+            }
         }
-        ///TODO: Implement filter: return value based on filer then update unit tests
-        return null;
     }
 
 }
