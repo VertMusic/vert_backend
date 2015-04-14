@@ -69,13 +69,18 @@ public class UserService extends GuidModelService<User> {
      * @return              The new User
      */
     @Override
-    public User create(Map model) {
+    public User create(Map model) throws Exception {
 
         System.out.println("UserService: create - " + model);
 
         /// If no data is passed in or the Map is empty, return null
         if (model == null) {
             return null;
+        }
+
+        /// Check if username already exists
+        if (model.get("username") == null || database.findByUsername((String) model.get("username")) != null) {
+            throw new Exception("User already exists or username not defined");
         }
 
         User user;

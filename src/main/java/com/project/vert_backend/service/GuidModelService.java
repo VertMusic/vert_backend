@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public abstract class GuidModelService<T extends GuidModel> {
 
-    public abstract T create(Map model);
+    public abstract T create(Map model) throws Exception;
 
     public abstract T read(String id);
 

@@ -289,24 +289,34 @@ public class DataController {
     public Map<String, Map> createUser(Map userMap, @Context HttpServletRequest request) {
         System.out.println("DataController: Creating - " + userMap);
 
-        User newUser = userService.create((Map) userMap.get("user"));
+        User newUser;
+        try {
+            newUser = userService.create((Map) userMap.get("user"));
+        } catch (Exception ex) {
+            // When we get here it means newUser is null, more than likely because the username already exists
+            System.out.println("DataController: Throw exception - " + ex.getMessage());
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
 
-        ///Object containing the user's id and access token
-        Map user = new HashMap();
-        user.put("id", newUser.getId());
-        user.put("accessToken", newUser.getCredentialToken());
-        user.put("password", "");
-        user.put("name", newUser.getName());
-        user.put("username", newUser.getUsername());
-        user.put("email", newUser.getEmail());
+        if (newUser != null) {
+            ///Object containing the user's id and access token
+            Map user = new HashMap();
+            user.put("id", newUser.getId());
+            user.put("accessToken", newUser.getCredentialToken());
+            user.put("password", "");
+            user.put("name", newUser.getName());
+            user.put("username", newUser.getUsername());
+            user.put("email", newUser.getEmail());
 
-        //// Label the apiKey object to meet Ember convention
-        Map resultMap = new HashMap();
-        resultMap.put("user", user);
+            //// Label the apiKey object to meet Ember convention
+            Map resultMap = new HashMap();
+            resultMap.put("user", user);
 
-        System.out.println("DataController: Returning - " + resultMap);
+            System.out.println("DataController: Returning - " + resultMap);
 
-        return resultMap;
+            return resultMap;
+        }
+        return null;
     }
 
     /**
