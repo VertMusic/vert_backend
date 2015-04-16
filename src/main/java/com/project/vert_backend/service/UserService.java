@@ -79,7 +79,7 @@ public class UserService extends GuidModelService<User> {
         }
 
         /// Check if username already exists
-        if (model.get("username") == null || database.findByUsername((String) model.get("username")) != null) {
+        if (database.findByUsername((String) model.get("username")) != null) {
             throw new Exception("User already exists or username not defined");
         }
 

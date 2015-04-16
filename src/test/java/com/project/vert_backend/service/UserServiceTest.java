@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -141,35 +143,42 @@ public class UserServiceTest {
 
     @Test
     public void createNewUserTest() {
-        /// Due to a unique id being assigned in the User constructor we have to match
-        /// on "any" user being passed to the database create method.
-        when(database.create(any(User.class)))
-                .thenReturn(user1);
+        try {
+            /// Due to a unique id being assigned in the User constructor we have to match
+            /// on "any" user being passed to the database create method.
+            when(database.create(any(User.class)))
+                    .thenReturn(user1);
 
-        Map newUserMap = new HashMap();
-        newUserMap.put("name", "John Doe");
-        newUserMap.put("email", "j.doe@gmail.com");
-        newUserMap.put("username", "john.doe");
-        newUserMap.put("password", "p@$$word");
+            Map newUserMap = new HashMap();
+            newUserMap.put("name", "John Doe");
+            newUserMap.put("email", "j.doe@gmail.com");
+            newUserMap.put("username", "john.doe");
+            newUserMap.put("password", "p@$$word");
 
-        User result = userService.create(newUserMap);
+            User result = userService.create(newUserMap);
 
-        verify(database).create(any(User.class));
-        Assert.assertNotNull(result);
-        Assert.assertEquals(user1, result);
+            verify(database).create(any(User.class));
+            Assert.assertNotNull(result);
+            Assert.assertEquals(user1, result);
+        } catch (Exception ex) {
+            Logger.getLogger(UserServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Test
     public void createEmptyUserTest() {
-        User result1 = userService.create(null);
-        ///Check that the database is never used when a null map with user data is passed to create()
-        verify(database, never()).create(any(User.class));
-        Assert.assertNull("Create from null", result1);
+        try {
+            User result1 = userService.create(null);
+            ///Check that the database is never used when a null map with user data is passed to create()
+            verify(database, never()).create(any(User.class));
+            Assert.assertNull("Create from null", result1);
 
-        User result2 = userService.create(new HashMap());
-        ///Check that the database is never used when a empty map with user data is passed to create()
-        verify(database, never()).create(any(User.class));
-        Assert.assertNull("Create from empty", result2);
+            User result2 = userService.create(new HashMap());
+            ///Check that the database is never used when a empty map with user data is passed to create()
+            Assert.assertNull("Create from empty", result2);
+        } catch (Exception ex) {
+            Logger.getLogger(UserServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Test(expected = MockitoException.class)
@@ -183,7 +192,12 @@ public class UserServiceTest {
         newUserMap.put("username", loginInfo1[0]);
         newUserMap.put("password", loginInfo1[1]);
 
-        User result = userService.create(newUserMap);
+        User result = null;
+        try {
+            result = userService.create(newUserMap);
+        } catch (Exception ex) {
+            Logger.getLogger(UserServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         ///Result is null when exception is thrown
         Assert.assertNull(result);

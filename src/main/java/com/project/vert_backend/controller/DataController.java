@@ -42,6 +42,9 @@ import javax.ws.rs.core.Response;
 @Path("/data")
 public class DataController {
 
+    /// Sends emails
+    EmailController emailController = new EmailController();
+
     ///Services to retrieve and create specific model objects
     PlaylistService playlistService = new PlaylistService();
     UserService userService = new UserService();
@@ -314,6 +317,7 @@ public class DataController {
 
             System.out.println("DataController: Returning - " + resultMap);
 
+            emailController.sendWelcomeMessage(newUser);
             return resultMap;
         }
         return null;
