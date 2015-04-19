@@ -111,7 +111,7 @@ public class UserDAO {
             return null;
         }
 
-        String sql = "INSERT INTO Users (ID, Name, Username, Email, AuthToken, PasswordHash) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (ID, Name, Username, Email, AuthToken, PasswordHash, ActivationCode) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection connection = DatabaseConnection.getConnection();
 
         try {
@@ -122,11 +122,66 @@ public class UserDAO {
             pStatement.setString(4, user.getEmail());
             pStatement.setString(5, user.getCredentialToken());
             pStatement.setString(6, user.getPasswordHash());
+            pStatement.setString(7, user.getActivationCode());
             pStatement.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("UserDAO - create Exception: " + ex);
             user = null;
         }
+        DatabaseConnection.closeConnection(connection);
+        return user;
+    }
+
+    /**
+     * Update a current User's information in the database;
+     * @param id    The if of a User that we are activating.
+     * @return      The success of the activation
+     */
+    public User activate(String activationCode) {
+
+        if (activationCode == null || activationCode.equalsIgnoreCase("")) {
+            return null;
+        }
+
+        Connection connection = DatabaseConnection.getConnection();
+        User user = findByActivationCode(activationCode);
+
+        /// A user is found with the activation code
+        if (user != null) {
+            String userID = user.getId();
+            String sqlActivate = "UPDATE Users SET ActivationCode=? WHERE ID=?";
+            try {
+                PreparedStatement pStatement = connection.prepareStatement(sqlActivate);
+                pStatement.setString(1, "0");
+                pStatement.setString(2, userID);
+                pStatement.executeUpdate();
+            } catch (SQLException ex) {
+                System.out.println("UserDAO - activate Exception: " + ex);
+            }
+        }
+
+        DatabaseConnection.closeConnection(connection);
+        return user;
+    }
+
+    public User findByActivationCode(String activationCode) {
+        User user = null;
+        Connection connection = DatabaseConnection.getConnection();
+
+        String sqlGetUser = "SELECT * FROM Users WHERE ActivationCode=?";
+        try {
+            ///Use PreparedStatement to insert "activationCode" for "?" in sql string.
+            PreparedStatement pStatement = connection.prepareStatement(sqlGetUser);
+            pStatement.setString(1, activationCode);
+
+            ResultSet resultSet = pStatement.executeQuery();
+            if (resultSet.next()) {
+                user = processRow(resultSet);
+            }
+        } catch (SQLException ex) {
+            System.out.println("UserDAO - findByActivationCode Exception: " + ex);
+        }
+
         DatabaseConnection.closeConnection(connection);
         return user;
     }
@@ -201,6 +256,7 @@ public class UserDAO {
         user.setEmail(resultSet.getString("Email"));
         user.setPasswordHash(resultSet.getString("PasswordHash"));
         user.setCredentialToken(resultSet.getString("AuthToken"));
+        user.setActivationCode(resultSet.getString("ActivationCode"));
 
         return user;
     }

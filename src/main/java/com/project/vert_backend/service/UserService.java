@@ -116,6 +116,31 @@ public class UserService extends GuidModelService<User> {
     }
 
     /**
+     * @param id   The id of a User to be checked is it is active
+     * @return     True if active, False if not yet activated account
+     */
+    public boolean isActive(String id) {
+        return isActive(read(id));
+    }
+
+    /**
+     * @param user The User to be checked is it is active
+     * @return     True if active, False if not yet activated account
+     */
+    public boolean isActive(User user) {
+        return user.getActivationCode().equalsIgnoreCase("0");
+    }
+
+    /**
+     *
+     * @param activationCode    A guid linked to a User's activation
+     * @return                  User that has the activation code assigned
+     */
+    public User activate(String activationCode) {
+        return database.activate(activationCode);
+    }
+
+    /**
      * Retrieves a User from the database based on their username.
      * @param username
      * @return

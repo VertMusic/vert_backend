@@ -302,6 +302,9 @@ public class DataController {
         }
 
         if (newUser != null) {
+            ///Send activation link in welcome message to user
+            emailController.sendWelcomeActivation(newUser);
+
             ///Object containing the user's id and access token
             Map user = new HashMap();
             user.put("id", newUser.getId());
@@ -316,8 +319,6 @@ public class DataController {
             resultMap.put("user", user);
 
             System.out.println("DataController: Returning - " + resultMap);
-
-            emailController.sendWelcomeMessage(newUser);
             return resultMap;
         }
         return null;
@@ -361,10 +362,10 @@ public class DataController {
 
     /**
      * Method endpoint that allows a user to authenticate.
-     * @param loginMap  A Json object containing a username and password
-     * @param request   Context of request that should not have a User since they are
-     *                  attempting to authenticate.
-     * @return          Returns a json object that contains session information.
+     * @param sessionMap A Json object containing a username and password
+     * @param request    Context of request that should not have a User since they are
+     *                   attempting to authenticate.
+     * @return           Returns a json object that contains session information.
      *
      * This endpoint accepts Json formatted in the following way:
      *      {
@@ -389,6 +390,7 @@ public class DataController {
         Map session = new HashMap();
 
         Map loginInfo = (Map) sessionMap.get("session");
+
         if (loginInfo != null) {
             User loginUser = userService.authenticate(
                     (String) loginInfo.get("username"),
@@ -399,20 +401,70 @@ public class DataController {
                 session.put("accessToken", loginUser.getCredentialToken());
                 System.out.println("DataController: Login info found for " + loginUser.getId());
 
-                /// We have valid login information to start a new session
-                Map resultMap = new HashMap();
-                resultMap.put("session", session);
-                System.out.println("DataController: Valid session - " + resultMap);
-                return resultMap;
-            } else {
-                System.out.println("DataController: ERROR - Login info does not correlate to user in system.");
+                /// Check whether the valid login credentials are to an active account
+                if (userService.isActive(loginUser)) {
+                    /// We have valid login information on an activated account to start a new session
+                    Map resultMap = new HashMap();
+                    resultMap.put("session", session);
+                    System.out.println("DataController: Valid session - " + resultMap);
+                    return resultMap;
+                } else {
+                    /// When we get here it means that we do not have valid login information
+                    System.out.println("DataController: throw not-active-account exception (409) - " + sessionMap);
+                    throw new WebApplicationException(Response.Status.CONFLICT);
+                }
             }
-        } else {
-            System.out.println("DataController: ERROR - Login info not found in session");
         }
 
         /// When we get here it means that we do not have valid login information
         System.out.println("DataController: Throw unauthorized exception (401) - " + sessionMap);
+        throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+    }
+
+    /**
+     * Method endpoint that allows a user to activate their account.
+     * @param code        An activation id for a user
+     * @param request     Context of request
+     * @return            Returns a json object that contains activation information.
+     *
+     * This endpoint returns Json formatted in the following way:
+     *      {
+     *          activate : {
+     *              userId: "1245-df-453-isdfdsl",
+     *              username: "john.doe",
+     *              name: "John Doe"
+     *              accessToken: "3209864hffif=adgh32k869999uoi",
+     *              activationCode: "983243sfhnnbvf=fgh32k86345ith",
+     *          }
+     *      }
+     */
+    @GET
+    @Path("/activates/{code}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map> activateUser(@PathParam("code") String code, @Context HttpServletRequest request) {
+        Map activate = new HashMap();
+
+        if (code != null && !code.equalsIgnoreCase("")) {
+            /// Activate the user associated with the code
+            User activateUser = userService.activate(code);
+
+            if (activateUser != null) {
+                /// We have been able to validate an account
+                activate.put("userId", activateUser.getId());
+                activate.put("username", activateUser.getUsername());
+                activate.put("name", activateUser.getName());
+                activate.put("accessToken", activateUser.getCredentialToken());
+                activate.put("id", code);
+
+                Map resultMap = new HashMap();
+                resultMap.put("activate", activate);
+                System.out.println("DataController: Valid activation - " + resultMap);
+                return resultMap;
+            }
+        }
+
+        /// When we get here it means that we do not have valid activation information
+        System.out.println("DataController: Throw unauthorized exception (401) - " + code);
         throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
 }

@@ -1,5 +1,7 @@
 package com.project.vert_backend.model;
 
+import java.util.UUID;
+
 /**
  * @author Selwyn Lehmann
  */
@@ -11,6 +13,7 @@ public class User extends GuidModel {
     private String email;
     private String passwordHash;
     private String credentialToken; /// Base64 of "Basic username:password" for Basic auth filtering
+    private String activationCode;
 
     public User() {
         super();
@@ -19,6 +22,7 @@ public class User extends GuidModel {
         username = "";
         passwordHash = "";
         credentialToken = "";
+        activationCode = "";
     }
 
     public User(String aName, String anEmail, String aUsername, String aPasswordHash, String aCredentialToken) {
@@ -28,6 +32,15 @@ public class User extends GuidModel {
         username = aUsername;
         passwordHash = aPasswordHash;
         credentialToken = aCredentialToken;
+        activationCode = UUID.randomUUID().toString();
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String anActivationCode) {
+        activationCode = anActivationCode;
     }
 
     public String getUsername() {

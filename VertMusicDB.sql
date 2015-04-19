@@ -47,5 +47,6 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `PasswordHash` varchar(255) NOT NULL,
   `AuthToken` varchar(255) NOT NULL,
   `Image` varchar(255) DEFAULT "",
+  `ActivationCode` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
