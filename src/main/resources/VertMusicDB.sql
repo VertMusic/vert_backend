@@ -1,12 +1,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-
 CREATE DATABASE VertMusicDB;
-CREATE USER 'java-user'@'localhost' IDENTIFIED BY 'java-password1234';
-GRANT ALL PRIVILEGES ON VertMusicDB.* TO 'java-user'@'localhost' IDENTIFIED BY 'java-password1234' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
 USE VertMusicDB;
-
-
 CREATE TABLE IF NOT EXISTS `Comments` (
   `ID` varchar(255) NOT NULL,
   `UserID` varchar(255) NOT NULL,
@@ -15,8 +9,6 @@ CREATE TABLE IF NOT EXISTS `Comments` (
   `Content` text NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
 CREATE TABLE IF NOT EXISTS `Playlists` (
   `ID` varchar(255) NOT NULL,
   `Name` varchar(50) NOT NULL,
@@ -26,8 +18,6 @@ CREATE TABLE IF NOT EXISTS `Playlists` (
   `Visibility` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
 CREATE TABLE IF NOT EXISTS `Songs` (
   `ID` varchar(255) NOT NULL,
   `Title` varchar(50) NOT NULL,
@@ -37,8 +27,6 @@ CREATE TABLE IF NOT EXISTS `Songs` (
   `Filepath` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
 CREATE TABLE IF NOT EXISTS `Users` (
   `ID` varchar(255) NOT NULL,
   `Name` varchar(80) NOT NULL,

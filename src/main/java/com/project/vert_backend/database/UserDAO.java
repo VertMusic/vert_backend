@@ -22,7 +22,7 @@ public class UserDAO {
     public List<User> findAll() {
         String sql = "SELECT * FROM Users";
         List<User> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             Statement statement = connection.createStatement();
@@ -51,7 +51,7 @@ public class UserDAO {
 
         String sql = "SELECT * FROM Users WHERE ID=?";
         User user = null;
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             ///Use PreparedStatement to insert "id" for "?" in sql string.
@@ -82,7 +82,7 @@ public class UserDAO {
 
         String sql = "SELECT * FROM Users WHERE Username=?";
         User user = null;
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             ///Use PreparedStatement to insert "id" for "?" in sql string.
@@ -112,7 +112,7 @@ public class UserDAO {
         }
 
         String sql = "INSERT INTO Users (ID, Name, Username, Email, AuthToken, PasswordHash, ActivationCode) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -143,7 +143,7 @@ public class UserDAO {
             return null;
         }
 
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
         User user = findByActivationCode(activationCode);
 
         /// A user is found with the activation code
@@ -166,7 +166,7 @@ public class UserDAO {
 
     public User findByActivationCode(String activationCode) {
         User user = null;
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         String sqlGetUser = "SELECT * FROM Users WHERE ActivationCode=?";
         try {
@@ -198,7 +198,7 @@ public class UserDAO {
         }
 
         String sql = "UPDATE Users SET Name=?, Username=?, Email=?, AuthToken=?, PasswordHash=? WHERE ID=?";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -228,7 +228,7 @@ public class UserDAO {
         }
 
         String sql = "DELETE FROM Users WHERE ID=?";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);

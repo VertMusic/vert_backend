@@ -21,7 +21,7 @@ public class SongDAO {
     public List<Song> findAll() {
         String sql = "SELECT * FROM Songs";
         List<Song> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             Statement statement = connection.createStatement();
@@ -44,7 +44,7 @@ public class SongDAO {
     public List<Song> findByPlaylist(String id) {
         String sql = "SELECT * FROM Songs WHERE PlaylistID=?";
         List<Song> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -72,7 +72,7 @@ public class SongDAO {
         String sql = "SELECT * FROM Songs WHERE PlaylistID=?";
 
         List<String> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -96,7 +96,7 @@ public class SongDAO {
      */
     public Song create(Song song) {
         String sql = "INSERT INTO Songs (ID, Title, Artist, PlaylistID, Duration, Filepath) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -123,7 +123,7 @@ public class SongDAO {
     public Song findById(String id) {
         String sql = "SELECT * FROM Songs WHERE ID=?";
         Song song = null;
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             ///Use PreparedStatement to insert "id" for "?" in sql string.
@@ -152,7 +152,7 @@ public class SongDAO {
         }
 
         String sql = "DELETE FROM Songs WHERE ID=?";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);

@@ -22,7 +22,7 @@ public class PlaylistDAO {
     public List<Playlist> findAll() {
         String sql = "SELECT * FROM Playlists";
         List<Playlist> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             Statement statement = connection.createStatement();
@@ -50,7 +50,7 @@ public class PlaylistDAO {
         }
 
         String sql = "INSERT INTO Playlists (ID, Name, UserID, Date, Likes, Visibility) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -81,7 +81,7 @@ public class PlaylistDAO {
         }
 
         String sql = "UPDATE Playlists SET Name=?, UserID=?, Date=?, Likes=?, Visibility=? WHERE ID=?";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -111,7 +111,7 @@ public class PlaylistDAO {
         }
 
         String sql = "DELETE FROM Playlists WHERE ID=?";
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -128,7 +128,7 @@ public class PlaylistDAO {
     public List<Playlist> findAuthorizedPlaylistsForUser(String authorUsername) {
         String sql = "SELECT * FROM Playlists WHERE UserID=? OR Visibility='public'";
         List<Playlist> list = new ArrayList();
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             PreparedStatement pStatement = connection.prepareStatement(sql);
@@ -159,7 +159,7 @@ public class PlaylistDAO {
 
         String sql = "SELECT * FROM Playlists WHERE ID=?";
         Playlist playlist = null;
-        Connection connection = DatabaseConnection.getConnection();
+        Connection connection = DatabaseConnection.getDatabaseConnection();
 
         try {
             ///Use PreparedStatement to insert "id" for "?" in sql string.
