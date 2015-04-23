@@ -1,4 +1,5 @@
 package com.project.vert_backend.controller;
+import com.project.vert_backend.model.Constants;
 import com.project.vert_backend.model.User;
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -16,7 +17,7 @@ import javax.mail.internet.MimeMessage;
  */
 public class EmailController {
 
-    private Session session;
+    private final Session session;
 
     // Sender's email ID needs to be mentioned
     private static final String SENDER_EMAIL = "VertMusicService@gmail.com";
@@ -25,7 +26,7 @@ public class EmailController {
     public static final String WELCOME_SUBJECT = "Welcome to VertMusic";
     public static final String WELCOME_BODY = "Hello {name}, <br/><br/>Thank you for joining VertMusic. This is a confirmation "
             + "that your account has been successfully set up. Please follow this link to activate your account: "
-            + "<a href=\"http://192.168.56.101:8080/#/activate/{activationCode}\">Activate Vert Now</a><br/><br/>"
+            + "<a href=\"" + Constants.IP_ADDRESS + "/#/activate/{activationCode}\">Activate Vert Now</a><br/><br/>"
             + "Please take some time to download our VertMusic app from the Apple, or Google Play, Store to listen "
             + "to your music from your mobile devices!<br/><br/>"
             + "Sincerely,<br/>"
