@@ -13,10 +13,14 @@ import java.util.Scanner;
  * @author dev
  */
 class SqlScriptLauncher {
-    private static final String DB_NAME = "VertMusicDB";
-    private static final String DB_SCRIPT = "VertMusicDB.sql";
+//    private static final String DB_NAME = "VertMusicDB";
+//    private static final String DB_SCRIPT = "VertMusicDB.sql";
 
-    public SqlScriptLauncher() { }
+    private static final String DB_NAME = PropertiesController.getInstance().getProperty("database.name");
+    private static final String DB_SCRIPT = PropertiesController.getInstance().getProperty("files.scripts.db.setup");
+
+    public SqlScriptLauncher() {
+    }
 
     /**
      * Determine whether the database for the application exists and execute the sql script if it does not.

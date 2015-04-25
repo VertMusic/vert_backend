@@ -43,12 +43,12 @@ import javax.ws.rs.core.Response;
 public class DataController {
 
     /// Sends emails
-    EmailController emailController = new EmailController();
+    private EmailController emailController = new EmailController();
 
     ///Services to retrieve and create specific model objects
-    PlaylistService playlistService = new PlaylistService();
-    UserService userService = new UserService();
-    SongService songService = new SongService();
+    private PlaylistService playlistService = new PlaylistService();
+    private UserService userService = new UserService();
+    private SongService songService = new SongService();
 
     /**
      * Retrieves a single playlist based on an identifier.

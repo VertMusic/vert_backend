@@ -19,9 +19,8 @@ public class EmailController {
 
     private final Session session;
 
-    // Sender's email ID needs to be mentioned
-    private static final String SENDER_EMAIL = "VertMusicService@gmail.com";
-    private static final String PASSWORD = "y0u11n3v3rgu3ss";
+    private static final String SENDER_EMAIL = PropertiesController.getInstance().getProperty("email.auth.username");
+    private static final String PASSWORD = PropertiesController.getInstance().getProperty("email.auth.password");
 
     public static final String WELCOME_SUBJECT = "Welcome to VertMusic";
     public static final String WELCOME_BODY = "Hello {name}, <br/><br/>Thank you for joining VertMusic. This is a confirmation "
@@ -35,11 +34,11 @@ public class EmailController {
     public EmailController() {
         Authenticator auth = new Auth();
 
-        /// Use smtp via Google
+        /// Setup SMTP properties
         Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", PropertiesController.getInstance().getProperty("email.smtp.host"));
+        props.put("mail.smtp.port", PropertiesController.getInstance().getProperty("email.smtp.port"));
+        props.put("mail.smtp.starttls.enable", PropertiesController.getInstance().getProperty("email.smtp.starttls.enable"));
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.ssl.trust", "*");
 

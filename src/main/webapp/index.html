@@ -1,10 +1,489 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<head>
+  <meta charset="utf-8">
+  <title>Vert Music</title>
+  
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome-4.3.0.min.css">
+  <link rel="stylesheet" href="css/cover-page.css">
+  <link rel="stylesheet" href="css/navigation-menus.css">
+  <!--link rel="stylesheet" href="css/login-registration.css"-->
+    <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/style.css">
+  
+</head>
+<body>
+<!--***********************************************************************************************************************************************************
+                                                             MAIN APPLICATION/PAGE TEMPLATE
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars">
+    {{outlet 'modal'}}
+    {{#if session.isAuthenticated}}
+        <div id="wrapper" class="toggled">
+            <!-- bar at top of page -->
+            <nav id="top-menu" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <p class="navbar-text navbar-right">Signed in as <a href="javascript:void(0);" class="navbar-link">{{session.authUser.name}}</a></p>
+            </nav>
+            <!------------------------>
+
+            <!------ right menu ------>
+            <nav id="optionsMenu" class="navbar navbar-minimal animate navbar-fixed-right" role="navigation">
+                <div class="navbar-toggler animate" {{action 'toggleOptionsMenu'}}>
+                    <span class="menu-icon">
+                        <i class="glyphicon glyphicon-plus glyphicon-3x"></i>
+                        <i class="glyphicon glyphicon-remove glyphicon-3x"></i>
+                    </span>
+                </div>
+                <ul class="navbar-menu animate">
+                    <li id="profile">
+                        <a href="javascript:void(0);" class="animate">
+                            <span class="desc animate"> Profile </span>
+                            <i class="fa fa-user fa-3x"></i>
+                        </a>
+                    </li>
+                    <li id="settings">
+                        <a href="javascript:void(0);" class="animate">
+                            <span class="desc animate"> Settings </span>
+                            <i class="fa fa-cog fa-3x"></i>
+                        </a>
+                    </li>
+                    <li id="about">
+                        {{#link-to 'about' class="animate"}}
+                            <span class="desc animate"> About </span>
+                            <i class="fa fa-info fa-3x"></i>
+                        {{/link-to}}
+                    </li>
+                    <li id="signout">
+                        {{#link-to 'session.destroy' class="animate"}}
+                            <span class="desc animate"> Sign out </span>
+                            <i class="fa fa-sign-out fa-3x"></i>
+                        {{/link-to}}
+                    </li>
+                </ul>
+            </nav>
+            <!------------------------>
+
+            <!-- left menu -->
+            <nav id="playlistMenu" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div id="sidebar-brand">
+                    {{#link-to 'playlists'}}
+                        <i class="glyphicon glyphicon-headphones glyphicon-3x"></i>Playlists
+                    {{/link-to}}
+                </div>
+                <div class="panel-group sidebar-content" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingPrivate" data-toggle="collapse" data-parent="#accordion" href="#collapsePrivate" aria-expanded="true" aria-controls="collapsePrivate">
+                            <span class="panel-title">
+                                <i class="fa fa-lock fa-fw"></i>Private
+                            </span>
+                        </div>
+                        <div id="collapsePrivate" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPrivate">
+                            <div class="list-group">                                
+                                {{outlet 'playlists'}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingPublic" data-toggle="collapse" data-parent="#accordion" href="#collapsePublic" aria-expanded="true" aria-controls="collapsePublic">
+                            <span class="panel-title">
+                                <i class="fa fa-unlock-alt fa-fw"></i>Public
+                            </span>
+                        </div>
+                        <div id="collapsePublic" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPublic">
+                            <div class="list-group">
+                                <a class="list-group-item">Stub Item 1</a>
+                                <a class="list-group-item">Stub Item 2</a>
+                                <a class="list-group-item">Stub Item 3</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div id="page-content-wrapper">
+                <div>
+                    <div id="playlistToggle" class="navbar-toggler animate open" data-toggle="offcanvas" {{action 'togglePlaylistMenu'}}>
+                        <span class="menu-icon">
+                            <i class="glyphicon glyphicon-headphones glyphicon-3x"></i>
+                            <i class="glyphicon glyphicon-remove glyphicon-3x"></i>
+                        </span>
+                    </div>
+                    <span class="navbar-audio-player animate open" id="audio-player-container">
+                        <!-- REPLACE THESE CONTENTS WITH OTHER MP# PLAYER -->
+                        <audio controls name="media"  id="audio-player">
+                          <source src="">
+                          Your browser does not support the audio element.
+                        </audio>
+                        <span id="audio-player-song-info">
+                            <span id="audio-player-title">Title</span> - <span id="audio-player-artist">Artist</span>
+                        </span>
+                        <!------------>
+                    </span>
+                </div>
+
+                {{#if 'isLanding'}}
+                    <div id="logo-container">
+                        <i class="glyphicon glyphicon-headphones"></i>VertMusic
+                    </div>
+                {{/if}}
+                {{outlet}}
+        
+            </div>
+        </div>
+      {{else}}
+        <div id="cover" class="site-wrapper">
+            <div class="site-wrapper-inner">
+                <div class="cover-container">
+                    <div class="masthead clearfix">
+                        <div class="inner">
+                            <h3 class="masthead-brand">
+                                <i class="glyphicon glyphicon-headphones glyphicon-3x"></i>VertMusic
+                            </h3>
+                            <nav>
+                                <ul class="nav masthead-nav">
+                                    {{#link-to 'index' tagName="li" href=false}}
+                                        <a {{bind-attr href="view.href"}}>Home</a>
+                                    {{/link-to}}
+                                    {{#link-to 'register' tagName="li" href=false}}
+                                        <a {{bind-attr href="view.href"}}>Register</a>
+                                    {{/link-to}}
+                                    {{#link-to 'login' tagName="li" href=false}}
+                                        <a {{bind-attr href="view.href"}}>Sign in</a>
+                                    {{/link-to}}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="inner cover">
+                        {{#if isIndex}}
+                            {{partial 'intro'}}
+                        {{/if}}
+                        {{outlet 'notAuth'}}
+                    </div>
+                    <div class="mastfoot">
+                        <div class="inner">
+                            <p>See VertMusic source code on <a href="https://github.com/VertMusic">Github</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>      
+      {{/if}}
+  </script>
+    
+  <script type="text/x-handlebars" id="intro">
+      <div id="content">
+            <h1 class="cover-heading">Your music, anywhere.</h1>
+            <div style="width:50%;float:left;min-width:300px;">
+              <img src="image/vert-screens.png" width="100%"/>
+            </div>
+            <div style="width:50%;float:left;padding-top:40px;min-width:300px;">
+            <p class="lead">
+                Upload your favorite songs from your computer and listen to them from anywhere you want. <br/>In addition, get access to thousands of public playlists created by others.
+            </p>
+            <p>
+                <a href="https://play.google.com/store/music?hl=en" title="VertMusic in Google Play Store">
+                    <img src="image/google-play.svg" width="40%" style="margin-right:5px;"/> 
+                </a>
+                <a href="https://itunes.apple.com/us/genre/ios-music/id6011?mt=8" title="VertMusic in Apple App Store">
+                    <img src="image/app-store.png" width="40%"/>
+                </a>
+            </p>
+            </div>
+            <div style="clear:both;width:100%">
+            <p>
+                {{#link-to 'register' class="btn btn-lg btn-default"}} Sign up for free! {{/link-to}}
+            </p>
+            </div>
+        </div>
+  </script>
+  
+<!--***********************************************************************************************************************************************************
+                                                                PLAYLISTS NAVIGATION TEMPLATE
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars" id="playlists">
+    {{#each}}
+        <!-- links to specific playlist: "this" specifies which model to use  -->
+        {{#link-to 'playlist' this class="list-group-item"}}
+            {{name}} <small class="text-muted">by {{author}}</small>
+        {{/link-to}}
+    {{/each}}           
+    {{#if isAdding}}
+        <a id="adding-playlist" class="list-group-item">
+            {{focus-input type="text" value=playlistName action="saveNew"}}
+            <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default btn-xs" {{action "saveNew"}}>Add</button>
+                    <button type="button" class="btn btn-default btn-xs" {{action "cancelNew"}}>Cancel</button>
+                </div>
+            </div>
+        </a>
+    {{else}}
+        <a id="add-playlist" class="list-group-item" {{action "addNew"}}><i class="glyphicon glyphicon-plus"></i> Add Playlist</a>
+    {{/if}}
+    <br/>
+  </script>
+  
+<!--*********************************************************************************************************************************************************** 
+                                                                  SINGLE PLAYLIST PAGE TEMPLATE 
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars" id="playlist">
+    <div id="playlist-container" class="container-fluid">
+      <div class="row-fluid">         
+        <!-- Allows inline editing of name: This is tied to the PlaylistController   -->
+        {{#if isEditing}}
+          <h1 class="edit">
+            {{focus-input type="text" value=name action="doneEditing"}}
+            <!--button class="btn btn-primary float-right">Done</button-->
+              <div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default btn-xs" {{action 'doneEditing'}}>Done</button>
+                    <button type="button" class="btn btn-default btn-xs" {{action 'cancelEditing'}}>Cancel</button>
+                </div>
+            </div>
+          </h1>
+        {{else}}
+          <h1 {{action 'edit'}} class="editable-field" title="Click to edit">{{name}}</h1>
+        {{/if}}
+        <h4 class="playlist-subheading">by {{author}}<small class="muted">&nbsp;({{format-date date}})</small></h4>
+        
+        {{#if isAddingSong}}
+          <form id="newSongData" enctype="multipart/form-data">
+            <label>Artist</label>{{input type="text" valueBinding="songArtist"}}<br/>
+            <label>Title</label>{{input type="text" valueBinding="songTitle"}}<br/>
+            <label>File</label>{{input class="songFile" type="file"}}<br/>
+              {{#if isSubmitting}}
+                <button disabled="true"><i class="fa fa-spinner fa-pulse"></i></button>
+                <button disabled="true">Cancel</button>              
+              {{else}}
+                <button {{action 'submitSongData'}}>Submit</button>
+                <button {{action 'cancelAddSong'}}>Cancel</button>
+              {{/if}}
+          </form>
+        {{else}}
+          <a id="add-song" {{action 'addSong'}}>+ Add Song</a>
+        {{/if}}
+        
+      <hr/>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <td>Title</td>  
+              <td>Artist</td>
+              <td>Duration</td>
+              <td>Play</td>
+            </tr>  
+          </thead>
+          <tbody>
+            {{#each songs}}
+              <tr class="song" {{bind-attr id="this.id"}}>
+                <td class="song-title">{{title}}</td>  
+                <td class="song-artist">{{artist}}</td>
+                <td class="song-duration">{{duration}}</td>
+                <td>
+                  <button class="play-song-button" {{action "playSong" id}}><span class="play glyphicon glyphicon-play"></span></button>
+                </td>
+              </tr>  
+            {{/each}}
+          </tbody>
+        </table>
+    </div> 
+  </script> 
+      
+  <script type="text/x-handlebars" data-template-name="song-modal">
+	{{#my-modal title='Adding a Song' ok='save' close='removeModal' }}
+		<form id="data" action="http://192.168.56.101:8080/vert/file/song" method="POST" enctype="multipart/form-data">
+            <label>Artist</label><input type="text" name="artist" /><br/>
+            <label>Title</label><input type="text" name="title" /><br/>
+            <label>Playlist</label><input type="text" name="playlist" /><br/>
+            <label>File</label><input name="file" type="file" /><br/>
+            <button type="submit">Submit</button>
+        </form>
+	{{/my-modal}}
+  </script>	
+      
+  <script type="text/x-handlebars" data-template-name="components/my-modal">
+	<div class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">{{title}}</h4>
+				</div>
+				<div class="modal-body">
+					{{yield}}
+				</div>
+				<div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" {{action 'ok'}}>Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+  </script>
+
+<!--***********************************************************************************************************************************************************
+                                                                       ABOUT PAGE TEMPLATE
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars" id="about">
+    <div class="container">
+      <div class="row-fluid">
+        <p>
+          Vert is a music storage and sharing platform. Upload songs and access them from anywhere on your computer 
+          or mobile devices. Playlists can be marked private and will only be seen by you, or share your list of tunes 
+          with the entire user community by making one public.
+        </p>
+      </div>
+    </div>
+  </script>
+    
+<!--*********************************************************************************************************************************************************** 
+                                                                    REGISTRATION PAGE TEMPLATE
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars" id="register">
+      <div class="alert-container col-sm-5 center">
+        {{#if usernameFailed}}
+            <div class="alert alert-danger" role="alert">
+              <strong>Warning!</strong> Username already exists!
+            </div>
+        {{/if}}
+        {{#if completionFailed}}
+            <div class="alert alert-danger" role="alert">
+              <strong>Warning!</strong> Please complete missing fields before submission!
+            </div>
+        {{/if}}
+        {{#if registrationComplete}}
+            <div class="alert alert-success" role="alert">
+              <strong>Account Created!</strong> Check your email to activate your account!
+            </div>
+        {{/if}}
+    </div>
+      <div class="form-wrapper col-sm-5 center">
+        <p class="form-title"> Register</p>
+        <form id="registration" class="login" {{action 'createUser' this on="submit"}}>            
+            {{input type="text" valueBinding="name" placeholder="Full Name"}}
+            {{input type="email" valueBinding="email" placeholder="Email Address"}}
+            {{input type="text" valueBinding="username" placeholder="Username"}}
+            {{input type="password" valueBinding="password" placeholder="Password"}}
+            {{input type="password" valueBinding="confirmPassword" placeholder="Confirm Password"}}
+            <div class="remember-forgot">
+                <div class="row">
+                    {{#if buttonsDisabled}}
+                    <div class="col-xs-6">
+                        <button {{action "reset"}} class="btn btn-danger"  disabled="true">Reset</button>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="btn btn-default" disabled="true"><i class="fa fa-spinner fa-pulse"></i></button>
+                    </div>
+                    {{else}}
+                    <div class="col-xs-6">
+                        <button {{action "reset"}} class="btn btn-danger">Reset</button>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </form>
+    </div>
+  </script>
+      
+<!--***********************************************************************************************************************************************************
+                                                                        ACTIVATE PAGE TEMPLATE
+*************************************************************************************************************************************************************-->
+  <script type="text/x-handlebars" id="activate">
+    <div class="form-wrapper col-sm-5 center">
+        <p class="form-title"> Welcome <span>{{model.name}}</span>!</p>
+        <p> 
+            You have successfully activate your VertMusic account. Don't forget to download the VertMusic app from
+            the Apple or Google Play Store. 
+            <br/><br/>
+            Now that your account is active you can login and start creating your very own playlist to share with the 
+            VertMusic community.
+        </p>
+        <button {{action 'toLogin'}} class="btn btn-default">Take me to login!</button>
+    </div>      
+  </script>
+      
+
+<!--***********************************************************************************************************************************************************
+                                                                        LOGIN PAGE TEMPLATE
+*************************************************************************************************************************************************************-->
+  
+  <script type="text/x-handlebars" id="login">
+    <div class="alert-container col-sm-5 center">
+        {{#if loginFailed}}
+            <div class="alert alert-danger" role="alert">
+              <strong>Warning!</strong> {{errorMessage}}
+            </div>
+        {{/if}}
+    </div>
+    <div class="form-wrapper col-sm-5 center">
+        <p class="form-title"> Please Sign In</p>
+        
+        <form class="login" {{action 'login' this on="submit"}}>
+            {{input valueBinding="username" type="text" placeholder="Username"}}
+            {{input valueBinding="password" type="password" placeholder="Password"}}
+            <input type="submit" name="submit" class="btn btn-default" />
+            <div class="remember-forgot">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="checkbox">
+                            <label>
+                                {{input type="checkbox" checked=remember class="toggle"}} Remember Me
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 forgot-pass-content">
+                        <a id="fpass" class="forgot-pass" {{action 'showModal' 'forgot-modal' model}}>Forgot Password?</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>      
+  </script>
+      
+  <script type="text/x-handlebars" data-template-name="forgot-modal">
+    {{#my-modal title='Forgot your Password? No Worries!' ok='Send' close='removeModal' }}
+        <form {{action 'forgot' on='submit' target=view}}>
+            <div class="form-group">
+                <label>Enter your email:</label>
+                    {{input class="form-control" value=email}}		
+            </div>
+        </form>
+    {{/my-modal}}
+  </script>	
+<!--***********************************************************************************************************************************************************
+                                                                   LIBRARIES/FILES
+*************************************************************************************************************************************************************-->  
+  
+  <!-- External libraries. NOTE: Order matters here -->
+  <script src="js/third-party/jquery-1.11.2.min.js"></script>
+  <script src="js/third-party/jquery.cookie.js"></script>
+  <script src="js/third-party/moment-with-locales.min.js"></script>
+  <script src="js/third-party/bootstrap.min.js"></script>
+  <script src="js/third-party/handlebars-v2.0.0.js"></script>
+  <script src="js/third-party/ember-1.9.1.js"></script>
+  <script src="js/third-party/ember-data-1.0.0.15.min.js"></script>
+  
+  <!-- Vert library files. NOTE Order matters here -->
+  <script src="js/lib/sidebar_menu.js"></script>
+  <script src="js/lib/minimal_menu.js"></script>
+  <script src="js/lib/initializer.js"></script>
+  <script src="js/lib/adapter.js"></script>
+  <script src="js/lib/route.js"></script>
+  <script src="js/lib/controller.js"></script>
+  <script src="js/lib/model.js"></script>
+  <script src="js/lib/component.js"></script>
+  <script src="js/lib/view.js"></script>
+  
+</body>
 </html>
