@@ -13,8 +13,8 @@ import java.util.Scanner;
  * @author dev
  */
 class SqlScriptLauncher {
-    private static final String DB_NAME = "VertMusicDB";
-    private static final String DB_SCRIPT = "VertMusicDB.sql";
+    private static final String DB_NAME = PropertiesController.getInstance().getProperty("database.name");
+    private static final String DB_SCRIPT = PropertiesController.getInstance().getProperty("files.scripts.db.setup");
 
     public SqlScriptLauncher() { }
 

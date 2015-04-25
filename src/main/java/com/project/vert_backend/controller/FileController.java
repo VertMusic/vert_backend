@@ -33,13 +33,13 @@ import javax.ws.rs.core.Response;
 @Path("/file")
 public class FileController {
 
-    private static final String SONG_BASE_PATH = "songs/";
-    private static final String USER_IMAGE_BASE_PATH = "images/users/";
+    private static final String SONG_BASE_PATH = PropertiesController.getInstance().getProperty("files.songs.directory");
+    private static final String USER_IMAGE_BASE_PATH = PropertiesController.getInstance().getProperty("files.images.users.directory");
 
     private static final int BUFFER_SIZE = 4096; //4KB
 
-    FileService fileService = new FileService();
-    SongService songService = new SongService();
+    private final FileService fileService = new FileService();
+    private final SongService songService = new SongService();
 
     @POST
     @Path("/song")

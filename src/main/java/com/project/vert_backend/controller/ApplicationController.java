@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebListener;
 public class ApplicationController implements ServletContextListener {
 
     /// The servlet context with which we are associated.
-    private ServletContext context = null;
+    private ServletContext context;
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
@@ -25,7 +25,10 @@ public class ApplicationController implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         this.context = event.getServletContext();
 
-        System.out.println("\nApplicationController: Running DB configuration...");
+        System.out.println("\nApplicationController: Reading application properties...");
+        PropertiesController.getInstance().setPropertiesFile(context.getClassLoader().getResourceAsStream("project.properties"));
+
+        System.out.println("ApplicationController: Running DB configuration...");
         SqlScriptLauncher sqlSetup = new SqlScriptLauncher();
         sqlSetup.run();
         System.out.println("ApplicationController: Initialization complete...\n");

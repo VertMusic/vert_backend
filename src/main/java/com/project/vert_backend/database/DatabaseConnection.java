@@ -1,5 +1,6 @@
 package com.project.vert_backend.database;
 
+import com.project.vert_backend.controller.PropertiesController;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,11 +12,11 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
 
-    private static final String DB_CLASS = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/";
-    private static final String DB_NAME = "VertMusicDB";
-    private static final String DB_USER = "root";//"java-user";
-    private static final String DB_PASSWORD = "";//"java-password1234";
+    private static final String DB_CLASS = PropertiesController.getInstance().getProperty("database.driverClass");
+    private static final String DB_URL = PropertiesController.getInstance().getProperty("database.url");
+    private static final String DB_NAME = PropertiesController.getInstance().getProperty("database.name");
+    private static final String DB_USER = PropertiesController.getInstance().getProperty("database.auth.username");
+    private static final String DB_PASSWORD = PropertiesController.getInstance().getProperty("database.auth.password");
 
     /**
      * Creates a connection to the MySQL database. E.g "<database.url>/<database.name>"
